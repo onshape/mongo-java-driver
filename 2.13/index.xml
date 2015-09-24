@@ -170,246 +170,6 @@ BSON is short for Binary &lt;a href=&#34;http://json.org/&#34;&gt;JSON&lt;/a&gt;
     </item>
     
     <item>
-      <title>Admin Quick Tour</title>
-      <link>/mongo-java-driver/2.13/getting-started/quick-tour-admin/</link>
-      <pubDate>Tue, 17 Mar 2015 15:36:56 +0000</pubDate>
-      
-      <guid>/mongo-java-driver/2.13/getting-started/quick-tour-admin/</guid>
-      <description>
-
-&lt;h1 id=&#34;mongodb-driver-admin-quick-tour:72db0d7d9b72569ab1f7da8f74305055&#34;&gt;MongoDB Driver Admin Quick Tour&lt;/h1&gt;
-
-&lt;p&gt;This is the second part of the MongoDB driver quick tour. In the
-&lt;a href=&#34;/mongo-java-driver/2.13/mongo-java-driver/2.13/getting-started/quick-tour/&#34;&gt;quick tour&lt;/a&gt; we looked at how to
-use the Java driver to execute basic CRUD operations.  In this section we&amp;rsquo;ll look at some of the
-administrative features available in the driver.&lt;/p&gt;
-
-&lt;p&gt;The following code snippets come from the &lt;code&gt;QuickTourAdmin.java&lt;/code&gt; example code
-that can be found with the &lt;a href=&#34;https://github.com/mongodb/mongo-java-driver/blob/2.13.x/src/examples/example/QuickTourAdmin.java
-&#34;&gt;driver
-source&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;&lt;div class=&#34;admonition note&#34;&gt;
-&lt;h5 class=&#34;admonition-title&#34;&gt;Note&lt;/h5&gt;
-&lt;p&gt;See the &lt;a href=&#34;/mongo-java-driver/2.13/mongo-java-driver/2.13/getting-started/installation-guide/&#34;&gt;installation guide&lt;/a&gt;
-for instructions on how to install the MongoDB Driver.&lt;/p&gt;
-
-&lt;/div&gt;
-&lt;/p&gt;
-
-&lt;h2 id=&#34;setup:72db0d7d9b72569ab1f7da8f74305055&#34;&gt;Setup&lt;/h2&gt;
-
-&lt;p&gt;To get use started we&amp;rsquo;ll quickly connect and create a &lt;code&gt;mongoClient&lt;/code&gt;, &lt;code&gt;database&lt;/code&gt; and &lt;code&gt;collection&lt;/code&gt;
-variable for use in the examples below:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;MongoClient mongoClient = new MongoClient();
-MongoDatabase database = mongoClient.getDatabase(&amp;quot;mydb&amp;quot;);
-MongoCollection&amp;lt;Document&amp;gt; collection = database.getCollection(&amp;quot;test&amp;quot;);
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;getting-a-list-of-databases:72db0d7d9b72569ab1f7da8f74305055&#34;&gt;Getting A List of Databases&lt;/h2&gt;
-
-&lt;p&gt;You can get a list of the available databases:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;MongoClient mongoClient = new MongoClient();
-
-for (String s : mongoClient.getDatabaseNames()) {
-   System.out.println(s);
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Calling &lt;code&gt;mongoClient.getDB()&lt;/code&gt; does not create a database. Only when a
-database is written to will a database be created. Examples would be
-creating an index or collection or inserting a document.&lt;/p&gt;
-
-&lt;h2 id=&#34;dropping-a-database:72db0d7d9b72569ab1f7da8f74305055&#34;&gt;Dropping A Database&lt;/h2&gt;
-
-&lt;p&gt;You can drop a database by name using a &lt;code&gt;MongoClient&lt;/code&gt; instance:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;MongoClient mongoClient = new MongoClient();
-mongoClient.dropDatabase(&amp;quot;databaseToBeDropped&amp;quot;);
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;creating-a-collection:72db0d7d9b72569ab1f7da8f74305055&#34;&gt;Creating A Collection&lt;/h2&gt;
-
-&lt;p&gt;There are two ways to create a collection. Inserting a document will
-create the collection if it doesn&amp;rsquo;t exist or calling the
-&lt;a href=&#34;http://docs.mongodb.org/manual/reference/method/db.createCollection&#34;&gt;createCollection&lt;/a&gt;
-command.&lt;/p&gt;
-
-&lt;p&gt;An example of creating a capped sized to 1 megabyte:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;db = mongoClient.getDB(&amp;quot;mydb&amp;quot;);
-db.createCollection(&amp;quot;testCollection&amp;quot;, new BasicDBObject(&amp;quot;capped&amp;quot;, true)
-        .append(&amp;quot;size&amp;quot;, 1048576));
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;getting-a-list-of-collections:72db0d7d9b72569ab1f7da8f74305055&#34;&gt;Getting A List of Collections&lt;/h2&gt;
-
-&lt;p&gt;You can get a list of the available collections in a database:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;for (String s : db.getCollectionNames()) {
-   System.out.println(s);
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;It should output&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-ini&#34;&gt;system.indexes
-testCollection
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;div class=&#34;admonition note&#34;&gt;
-&lt;h5 class=&#34;admonition-title&#34;&gt;Note&lt;/h5&gt;
-&lt;p&gt;The system.indexes collection is automatically created and lists all
-the indexes in the database and shouldn&amp;rsquo;t be accessed directly.&lt;/p&gt;
-
-&lt;/div&gt;
-&lt;/p&gt;
-
-&lt;h2 id=&#34;dropping-a-collection:72db0d7d9b72569ab1f7da8f74305055&#34;&gt;Dropping A Collection&lt;/h2&gt;
-
-&lt;p&gt;You can drop a collection by using the drop() method:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;DBCollection coll = db.getCollection(&amp;quot;testCollection&amp;quot;);
-coll.drop();
-System.out.println(db.getCollectionNames());
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;And you should notice that testCollection has been dropped.&lt;/p&gt;
-
-&lt;h2 id=&#34;getting-a-list-of-indexes-on-a-collection:72db0d7d9b72569ab1f7da8f74305055&#34;&gt;Getting a List of Indexes on a Collection&lt;/h2&gt;
-
-&lt;p&gt;You can get a list of the indexes on a collection:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;List&amp;lt;DBObject&amp;gt; list = coll.getIndexInfo();
-
-for (DBObject o : list) {
-   System.out.println(o.get(&amp;quot;key&amp;quot;));
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;and you should see something like&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{ &amp;quot;v&amp;quot; : 1 , &amp;quot;key&amp;quot; : { &amp;quot;_id&amp;quot; : 1} , &amp;quot;name&amp;quot; : &amp;quot;_id_&amp;quot; , &amp;quot;ns&amp;quot; : &amp;quot;mydb.testCollection&amp;quot;}
-{ &amp;quot;v&amp;quot; : 1 , &amp;quot;key&amp;quot; : { &amp;quot;i&amp;quot; : 1} , &amp;quot;name&amp;quot; : &amp;quot;i_1&amp;quot; , &amp;quot;ns&amp;quot; : &amp;quot;mydb.testCollection&amp;quot;}
-{ &amp;quot;v&amp;quot; : 1 , &amp;quot;key&amp;quot; : { &amp;quot;loc&amp;quot; : &amp;quot;2dsphere&amp;quot;} , &amp;quot;name&amp;quot; : &amp;quot;loc_2dsphere&amp;quot; , ... }
-{ &amp;quot;v&amp;quot; : 1 , &amp;quot;key&amp;quot; : { &amp;quot;_fts&amp;quot; : &amp;quot;text&amp;quot; , &amp;quot;_ftsx&amp;quot; : 1} , &amp;quot;name&amp;quot; : &amp;quot;content_text&amp;quot; , ... }
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;creating-an-index:72db0d7d9b72569ab1f7da8f74305055&#34;&gt;Creating An Index&lt;/h2&gt;
-
-&lt;p&gt;MongoDB supports indexes, and they are very easy to add on a collection.
-To create an index, you just specify the field that should be indexed,
-and specify if you want the index to be ascending (&lt;code&gt;1&lt;/code&gt;) or descending
-(&lt;code&gt;-1&lt;/code&gt;). The following creates an ascending index on the &lt;code&gt;i&lt;/code&gt; field :&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;coll.createIndex(new BasicDBObject(&amp;quot;i&amp;quot;, 1));  // create index on &amp;quot;i&amp;quot;, ascending
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;geo-indexes:72db0d7d9b72569ab1f7da8f74305055&#34;&gt;Geo indexes&lt;/h2&gt;
-
-&lt;p&gt;MongoDB supports various &lt;a href=&#34;http://docs.mongodb.org/manual/core/geospatial-indexes/
-&#34;&gt;geospatial indexes&lt;/a&gt;
-in this example we&amp;rsquo;ll be creating a 2dsphere index which we can query using standard
-GeoJson markup. To create a 2dsphere index specify the string literal
-&amp;ldquo;2dsphere&amp;rdquo; in the index document:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;coll.createIndex(new BasicDBObject(&amp;quot;loc&amp;quot;, &amp;quot;2dsphere&amp;quot;));
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;There are various ways to
-query a [2dsphere index](http://docs.mongodb.org/manual//tutorial/query-a-2dsphere-index
- this example
-finds places within 500 meters of a location:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;BasicDBList coordinates = new BasicDBList();
-coordinates.put(0, -73.97);
-coordinates.put(1, 40.77);
-coll.insert(new BasicDBObject(&amp;quot;name&amp;quot;, &amp;quot;Central Park&amp;quot;)
-                .append(&amp;quot;loc&amp;quot;, new BasicDBObject(&amp;quot;type&amp;quot;, &amp;quot;Point&amp;quot;).append(&amp;quot;coordinates&amp;quot;, coordinates))
-                .append(&amp;quot;category&amp;quot;, &amp;quot;Parks&amp;quot;));
-
-coordinates.put(0, -73.88);
-coordinates.put(1, 40.78);
-coll.insert(new BasicDBObject(&amp;quot;name&amp;quot;, &amp;quot;La Guardia Airport&amp;quot;)
-        .append(&amp;quot;loc&amp;quot;, new BasicDBObject(&amp;quot;type&amp;quot;, &amp;quot;Point&amp;quot;).append(&amp;quot;coordinates&amp;quot;, coordinates))
-        .append(&amp;quot;category&amp;quot;, &amp;quot;Airport&amp;quot;));
-
-
-// Find whats within 500m of my location
-BasicDBList myLocation = new BasicDBList();
-myLocation.put(0, -73.965);
-myLocation.put(1, 40.769);
-myDoc = coll.findOne(
-            new BasicDBObject(&amp;quot;loc&amp;quot;,
-                new BasicDBObject(&amp;quot;$near&amp;quot;,
-                        new BasicDBObject(&amp;quot;$geometry&amp;quot;,
-                                new BasicDBObject(&amp;quot;type&amp;quot;, &amp;quot;Point&amp;quot;)
-                                    .append(&amp;quot;coordinates&amp;quot;, myLocation))
-                             .append(&amp;quot;$maxDistance&amp;quot;,  500)
-                        )
-                )
-            );
-System.out.println(myDoc.get(&amp;quot;name&amp;quot;));
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;It should print &lt;em&gt;Central Park&lt;/em&gt;. See the
-&lt;a href=&#34;http://docs.mongodb.org/manual//reference/operator/query-geospatial
-&#34;&gt;geospatial documentation&lt;/a&gt; for
-more information.&lt;/p&gt;
-
-&lt;h2 id=&#34;text-indexes:72db0d7d9b72569ab1f7da8f74305055&#34;&gt;Text indexes&lt;/h2&gt;
-
-&lt;p&gt;MongoDB also provides text indexes to support text search of string
-content. Text indexes can include any field whose value is a string or
-an array of string elements. To create a text index specify the string
-literal &amp;ldquo;text&amp;rdquo; in the index document:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;// create a text index on the &amp;quot;content&amp;quot; field
-coll.createIndex(new BasicDBObject(&amp;quot;content&amp;quot;, &amp;quot;text&amp;quot;));
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;As of MongoDB 2.6 text indexes are now integrated into the main query
-language and enabled by default:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;// Insert some documents
-coll.insert(new BasicDBObject(&amp;quot;_id&amp;quot;, 0).append(&amp;quot;content&amp;quot;, &amp;quot;textual content&amp;quot;));
-coll.insert(new BasicDBObject(&amp;quot;_id&amp;quot;, 1).append(&amp;quot;content&amp;quot;, &amp;quot;additional content&amp;quot;));
-coll.insert(new BasicDBObject(&amp;quot;_id&amp;quot;, 2).append(&amp;quot;content&amp;quot;, &amp;quot;irrelevant content&amp;quot;));
-
-// Find using the text index
-BasicDBObject search = new BasicDBObject(&amp;quot;$search&amp;quot;, &amp;quot;textual content -irrelevant&amp;quot;);
-BasicDBObject textSearch = new BasicDBObject(&amp;quot;$text&amp;quot;, search);
-int matchCount = coll.find(textSearch).count();
-System.out.println(&amp;quot;Text search matches: &amp;quot;+ matchCount);
-
-// Find using the $language operator
-textSearch = new BasicDBObject(&amp;quot;$text&amp;quot;, search.append(&amp;quot;$language&amp;quot;, &amp;quot;english&amp;quot;));
-matchCount = coll.find(textSearch).count();
-System.out.println(&amp;quot;Text search matches (english): &amp;quot;+ matchCount);
-
-// Find the highest scoring match
-BasicDBObject projection = new BasicDBObject(&amp;quot;score&amp;quot;, new BasicDBObject(&amp;quot;$meta&amp;quot;, &amp;quot;textScore&amp;quot;));
-myDoc = coll.findOne(textSearch, projection);
-System.out.println(&amp;quot;Highest scoring document: &amp;quot;+ myDoc);
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;and it should print:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-ini&#34;&gt;Text search matches: 2
-Text search matches (english): 2
-Highest scoring document: { &amp;quot;_id&amp;quot; : 1 , &amp;quot;content&amp;quot; : &amp;quot;additional content&amp;quot; , &amp;quot;score&amp;quot; : 0.75}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;For more information about text search see the &lt;a href=&#34;http://docs.mongodb.org/manual//core/index-text
-&#34;&gt;text index&lt;/a&gt; and
-&lt;a href=&#34;http://docs.mongodb.org/manual//reference/operator/query/text
-&#34;&gt;$text query operator&lt;/a&gt; documentation.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
       <title>Quick Tour</title>
       <link>/mongo-java-driver/2.13/getting-started/quick-tour/</link>
       <pubDate>Tue, 17 Mar 2015 15:36:56 +0000</pubDate>
@@ -793,6 +553,246 @@ result = builder.execute();
 
 &lt;/div&gt;
 &lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Admin Quick Tour</title>
+      <link>/mongo-java-driver/2.13/getting-started/quick-tour-admin/</link>
+      <pubDate>Tue, 17 Mar 2015 15:36:56 +0000</pubDate>
+      
+      <guid>/mongo-java-driver/2.13/getting-started/quick-tour-admin/</guid>
+      <description>
+
+&lt;h1 id=&#34;mongodb-driver-admin-quick-tour:72db0d7d9b72569ab1f7da8f74305055&#34;&gt;MongoDB Driver Admin Quick Tour&lt;/h1&gt;
+
+&lt;p&gt;This is the second part of the MongoDB driver quick tour. In the
+&lt;a href=&#34;/mongo-java-driver/2.13/mongo-java-driver/2.13/getting-started/quick-tour/&#34;&gt;quick tour&lt;/a&gt; we looked at how to
+use the Java driver to execute basic CRUD operations.  In this section we&amp;rsquo;ll look at some of the
+administrative features available in the driver.&lt;/p&gt;
+
+&lt;p&gt;The following code snippets come from the &lt;code&gt;QuickTourAdmin.java&lt;/code&gt; example code
+that can be found with the &lt;a href=&#34;https://github.com/mongodb/mongo-java-driver/blob/2.13.x/src/examples/example/QuickTourAdmin.java
+&#34;&gt;driver
+source&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;admonition note&#34;&gt;
+&lt;h5 class=&#34;admonition-title&#34;&gt;Note&lt;/h5&gt;
+&lt;p&gt;See the &lt;a href=&#34;/mongo-java-driver/2.13/mongo-java-driver/2.13/getting-started/installation-guide/&#34;&gt;installation guide&lt;/a&gt;
+for instructions on how to install the MongoDB Driver.&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;h2 id=&#34;setup:72db0d7d9b72569ab1f7da8f74305055&#34;&gt;Setup&lt;/h2&gt;
+
+&lt;p&gt;To get use started we&amp;rsquo;ll quickly connect and create a &lt;code&gt;mongoClient&lt;/code&gt;, &lt;code&gt;database&lt;/code&gt; and &lt;code&gt;collection&lt;/code&gt;
+variable for use in the examples below:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;MongoClient mongoClient = new MongoClient();
+MongoDatabase database = mongoClient.getDatabase(&amp;quot;mydb&amp;quot;);
+MongoCollection&amp;lt;Document&amp;gt; collection = database.getCollection(&amp;quot;test&amp;quot;);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;getting-a-list-of-databases:72db0d7d9b72569ab1f7da8f74305055&#34;&gt;Getting A List of Databases&lt;/h2&gt;
+
+&lt;p&gt;You can get a list of the available databases:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;MongoClient mongoClient = new MongoClient();
+
+for (String s : mongoClient.getDatabaseNames()) {
+   System.out.println(s);
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Calling &lt;code&gt;mongoClient.getDB()&lt;/code&gt; does not create a database. Only when a
+database is written to will a database be created. Examples would be
+creating an index or collection or inserting a document.&lt;/p&gt;
+
+&lt;h2 id=&#34;dropping-a-database:72db0d7d9b72569ab1f7da8f74305055&#34;&gt;Dropping A Database&lt;/h2&gt;
+
+&lt;p&gt;You can drop a database by name using a &lt;code&gt;MongoClient&lt;/code&gt; instance:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;MongoClient mongoClient = new MongoClient();
+mongoClient.dropDatabase(&amp;quot;databaseToBeDropped&amp;quot;);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;creating-a-collection:72db0d7d9b72569ab1f7da8f74305055&#34;&gt;Creating A Collection&lt;/h2&gt;
+
+&lt;p&gt;There are two ways to create a collection. Inserting a document will
+create the collection if it doesn&amp;rsquo;t exist or calling the
+&lt;a href=&#34;http://docs.mongodb.org/manual/reference/method/db.createCollection&#34;&gt;createCollection&lt;/a&gt;
+command.&lt;/p&gt;
+
+&lt;p&gt;An example of creating a capped sized to 1 megabyte:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;db = mongoClient.getDB(&amp;quot;mydb&amp;quot;);
+db.createCollection(&amp;quot;testCollection&amp;quot;, new BasicDBObject(&amp;quot;capped&amp;quot;, true)
+        .append(&amp;quot;size&amp;quot;, 1048576));
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;getting-a-list-of-collections:72db0d7d9b72569ab1f7da8f74305055&#34;&gt;Getting A List of Collections&lt;/h2&gt;
+
+&lt;p&gt;You can get a list of the available collections in a database:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;for (String s : db.getCollectionNames()) {
+   System.out.println(s);
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It should output&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-ini&#34;&gt;system.indexes
+testCollection
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;div class=&#34;admonition note&#34;&gt;
+&lt;h5 class=&#34;admonition-title&#34;&gt;Note&lt;/h5&gt;
+&lt;p&gt;The system.indexes collection is automatically created and lists all
+the indexes in the database and shouldn&amp;rsquo;t be accessed directly.&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;h2 id=&#34;dropping-a-collection:72db0d7d9b72569ab1f7da8f74305055&#34;&gt;Dropping A Collection&lt;/h2&gt;
+
+&lt;p&gt;You can drop a collection by using the drop() method:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;DBCollection coll = db.getCollection(&amp;quot;testCollection&amp;quot;);
+coll.drop();
+System.out.println(db.getCollectionNames());
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And you should notice that testCollection has been dropped.&lt;/p&gt;
+
+&lt;h2 id=&#34;getting-a-list-of-indexes-on-a-collection:72db0d7d9b72569ab1f7da8f74305055&#34;&gt;Getting a List of Indexes on a Collection&lt;/h2&gt;
+
+&lt;p&gt;You can get a list of the indexes on a collection:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;List&amp;lt;DBObject&amp;gt; list = coll.getIndexInfo();
+
+for (DBObject o : list) {
+   System.out.println(o.get(&amp;quot;key&amp;quot;));
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;and you should see something like&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{ &amp;quot;v&amp;quot; : 1 , &amp;quot;key&amp;quot; : { &amp;quot;_id&amp;quot; : 1} , &amp;quot;name&amp;quot; : &amp;quot;_id_&amp;quot; , &amp;quot;ns&amp;quot; : &amp;quot;mydb.testCollection&amp;quot;}
+{ &amp;quot;v&amp;quot; : 1 , &amp;quot;key&amp;quot; : { &amp;quot;i&amp;quot; : 1} , &amp;quot;name&amp;quot; : &amp;quot;i_1&amp;quot; , &amp;quot;ns&amp;quot; : &amp;quot;mydb.testCollection&amp;quot;}
+{ &amp;quot;v&amp;quot; : 1 , &amp;quot;key&amp;quot; : { &amp;quot;loc&amp;quot; : &amp;quot;2dsphere&amp;quot;} , &amp;quot;name&amp;quot; : &amp;quot;loc_2dsphere&amp;quot; , ... }
+{ &amp;quot;v&amp;quot; : 1 , &amp;quot;key&amp;quot; : { &amp;quot;_fts&amp;quot; : &amp;quot;text&amp;quot; , &amp;quot;_ftsx&amp;quot; : 1} , &amp;quot;name&amp;quot; : &amp;quot;content_text&amp;quot; , ... }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;creating-an-index:72db0d7d9b72569ab1f7da8f74305055&#34;&gt;Creating An Index&lt;/h2&gt;
+
+&lt;p&gt;MongoDB supports indexes, and they are very easy to add on a collection.
+To create an index, you just specify the field that should be indexed,
+and specify if you want the index to be ascending (&lt;code&gt;1&lt;/code&gt;) or descending
+(&lt;code&gt;-1&lt;/code&gt;). The following creates an ascending index on the &lt;code&gt;i&lt;/code&gt; field :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;coll.createIndex(new BasicDBObject(&amp;quot;i&amp;quot;, 1));  // create index on &amp;quot;i&amp;quot;, ascending
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;geo-indexes:72db0d7d9b72569ab1f7da8f74305055&#34;&gt;Geo indexes&lt;/h2&gt;
+
+&lt;p&gt;MongoDB supports various &lt;a href=&#34;http://docs.mongodb.org/manual/core/geospatial-indexes/
+&#34;&gt;geospatial indexes&lt;/a&gt;
+in this example we&amp;rsquo;ll be creating a 2dsphere index which we can query using standard
+GeoJson markup. To create a 2dsphere index specify the string literal
+&amp;ldquo;2dsphere&amp;rdquo; in the index document:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;coll.createIndex(new BasicDBObject(&amp;quot;loc&amp;quot;, &amp;quot;2dsphere&amp;quot;));
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;There are various ways to
+query a [2dsphere index](http://docs.mongodb.org/manual//tutorial/query-a-2dsphere-index
+ this example
+finds places within 500 meters of a location:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;BasicDBList coordinates = new BasicDBList();
+coordinates.put(0, -73.97);
+coordinates.put(1, 40.77);
+coll.insert(new BasicDBObject(&amp;quot;name&amp;quot;, &amp;quot;Central Park&amp;quot;)
+                .append(&amp;quot;loc&amp;quot;, new BasicDBObject(&amp;quot;type&amp;quot;, &amp;quot;Point&amp;quot;).append(&amp;quot;coordinates&amp;quot;, coordinates))
+                .append(&amp;quot;category&amp;quot;, &amp;quot;Parks&amp;quot;));
+
+coordinates.put(0, -73.88);
+coordinates.put(1, 40.78);
+coll.insert(new BasicDBObject(&amp;quot;name&amp;quot;, &amp;quot;La Guardia Airport&amp;quot;)
+        .append(&amp;quot;loc&amp;quot;, new BasicDBObject(&amp;quot;type&amp;quot;, &amp;quot;Point&amp;quot;).append(&amp;quot;coordinates&amp;quot;, coordinates))
+        .append(&amp;quot;category&amp;quot;, &amp;quot;Airport&amp;quot;));
+
+
+// Find whats within 500m of my location
+BasicDBList myLocation = new BasicDBList();
+myLocation.put(0, -73.965);
+myLocation.put(1, 40.769);
+myDoc = coll.findOne(
+            new BasicDBObject(&amp;quot;loc&amp;quot;,
+                new BasicDBObject(&amp;quot;$near&amp;quot;,
+                        new BasicDBObject(&amp;quot;$geometry&amp;quot;,
+                                new BasicDBObject(&amp;quot;type&amp;quot;, &amp;quot;Point&amp;quot;)
+                                    .append(&amp;quot;coordinates&amp;quot;, myLocation))
+                             .append(&amp;quot;$maxDistance&amp;quot;,  500)
+                        )
+                )
+            );
+System.out.println(myDoc.get(&amp;quot;name&amp;quot;));
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It should print &lt;em&gt;Central Park&lt;/em&gt;. See the
+&lt;a href=&#34;http://docs.mongodb.org/manual//reference/operator/query-geospatial
+&#34;&gt;geospatial documentation&lt;/a&gt; for
+more information.&lt;/p&gt;
+
+&lt;h2 id=&#34;text-indexes:72db0d7d9b72569ab1f7da8f74305055&#34;&gt;Text indexes&lt;/h2&gt;
+
+&lt;p&gt;MongoDB also provides text indexes to support text search of string
+content. Text indexes can include any field whose value is a string or
+an array of string elements. To create a text index specify the string
+literal &amp;ldquo;text&amp;rdquo; in the index document:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;// create a text index on the &amp;quot;content&amp;quot; field
+coll.createIndex(new BasicDBObject(&amp;quot;content&amp;quot;, &amp;quot;text&amp;quot;));
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;As of MongoDB 2.6 text indexes are now integrated into the main query
+language and enabled by default:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;// Insert some documents
+coll.insert(new BasicDBObject(&amp;quot;_id&amp;quot;, 0).append(&amp;quot;content&amp;quot;, &amp;quot;textual content&amp;quot;));
+coll.insert(new BasicDBObject(&amp;quot;_id&amp;quot;, 1).append(&amp;quot;content&amp;quot;, &amp;quot;additional content&amp;quot;));
+coll.insert(new BasicDBObject(&amp;quot;_id&amp;quot;, 2).append(&amp;quot;content&amp;quot;, &amp;quot;irrelevant content&amp;quot;));
+
+// Find using the text index
+BasicDBObject search = new BasicDBObject(&amp;quot;$search&amp;quot;, &amp;quot;textual content -irrelevant&amp;quot;);
+BasicDBObject textSearch = new BasicDBObject(&amp;quot;$text&amp;quot;, search);
+int matchCount = coll.find(textSearch).count();
+System.out.println(&amp;quot;Text search matches: &amp;quot;+ matchCount);
+
+// Find using the $language operator
+textSearch = new BasicDBObject(&amp;quot;$text&amp;quot;, search.append(&amp;quot;$language&amp;quot;, &amp;quot;english&amp;quot;));
+matchCount = coll.find(textSearch).count();
+System.out.println(&amp;quot;Text search matches (english): &amp;quot;+ matchCount);
+
+// Find the highest scoring match
+BasicDBObject projection = new BasicDBObject(&amp;quot;score&amp;quot;, new BasicDBObject(&amp;quot;$meta&amp;quot;, &amp;quot;textScore&amp;quot;));
+myDoc = coll.findOne(textSearch, projection);
+System.out.println(&amp;quot;Highest scoring document: &amp;quot;+ myDoc);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;and it should print:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-ini&#34;&gt;Text search matches: 2
+Text search matches (english): 2
+Highest scoring document: { &amp;quot;_id&amp;quot; : 1 , &amp;quot;content&amp;quot; : &amp;quot;additional content&amp;quot; , &amp;quot;score&amp;quot; : 0.75}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;For more information about text search see the &lt;a href=&#34;http://docs.mongodb.org/manual//core/index-text
+&#34;&gt;text index&lt;/a&gt; and
+&lt;a href=&#34;http://docs.mongodb.org/manual//reference/operator/query/text
+&#34;&gt;$text query operator&lt;/a&gt; documentation.&lt;/p&gt;
 </description>
     </item>
     

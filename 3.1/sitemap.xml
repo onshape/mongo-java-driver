@@ -23,11 +23,6 @@
   </url>
   
   <url>
-    <loc>/mongo-java-driver/3.1/bson/documents/</loc>
-    <lastmod>2015-03-19T14:27:51-04:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/mongo-java-driver/3.1/bson/codecs/</loc>
     <lastmod>2015-03-19T14:27:51-04:00</lastmod>
   </url>
@@ -38,12 +33,7 @@
   </url>
   
   <url>
-    <loc>/mongo-java-driver/3.1/bson/readers-and-writers/</loc>
-    <lastmod>2015-03-19T14:27:51-04:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/mongo-java-driver/3.1/builders/filters/</loc>
+    <loc>/mongo-java-driver/3.1/bson/documents/</loc>
     <lastmod>2015-03-19T14:27:51-04:00</lastmod>
   </url>
   
@@ -53,12 +43,22 @@
   </url>
   
   <url>
-    <loc>/mongo-java-driver/3.1/builders/sorts/</loc>
+    <loc>/mongo-java-driver/3.1/builders/filters/</loc>
+    <lastmod>2015-03-19T14:27:51-04:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/mongo-java-driver/3.1/bson/readers-and-writers/</loc>
     <lastmod>2015-03-19T14:27:51-04:00</lastmod>
   </url>
   
   <url>
     <loc>/mongo-java-driver/3.1/builders/projections/</loc>
+    <lastmod>2015-03-19T14:27:51-04:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/mongo-java-driver/3.1/builders/sorts/</loc>
     <lastmod>2015-03-19T14:27:51-04:00</lastmod>
   </url>
   
@@ -108,22 +108,17 @@
   </url>
   
   <url>
-    <loc>/mongo-java-driver/3.1/driver/reference/connecting/</loc>
-    <lastmod>2015-03-19T12:53:30-04:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/mongo-java-driver/3.1/driver/reference/connecting/connection-settings/</loc>
     <lastmod>2015-03-19T12:53:30-04:00</lastmod>
   </url>
   
   <url>
-    <loc>/mongo-java-driver/3.1/driver/reference/crud/</loc>
+    <loc>/mongo-java-driver/3.1/driver/reference/connecting/</loc>
     <lastmod>2015-03-19T12:53:30-04:00</lastmod>
   </url>
   
   <url>
-    <loc>/mongo-java-driver/3.1/driver-async/reference/connecting/connection-settings/</loc>
+    <loc>/mongo-java-driver/3.1/driver/reference/crud/</loc>
     <lastmod>2015-03-19T12:53:30-04:00</lastmod>
   </url>
   
@@ -134,6 +129,11 @@
   
   <url>
     <loc>/mongo-java-driver/3.1/driver-async/reference/crud/</loc>
+    <lastmod>2015-03-19T12:53:30-04:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/mongo-java-driver/3.1/driver-async/reference/connecting/connection-settings/</loc>
     <lastmod>2015-03-19T12:53:30-04:00</lastmod>
   </url>
   
@@ -178,6 +178,11 @@
   </url>
   
   <url>
+    <loc>/mongo-java-driver/3.1/driver/getting-started/quick-tour-admin/</loc>
+    <lastmod>2015-03-17T15:36:56+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/mongo-java-driver/3.1/driver/getting-started/</loc>
     <lastmod>2015-03-17T15:36:56+00:00</lastmod>
   </url>
@@ -188,7 +193,7 @@
   </url>
   
   <url>
-    <loc>/mongo-java-driver/3.1/driver/getting-started/quick-tour-admin/</loc>
+    <loc>/mongo-java-driver/3.1/driver/getting-started/quick-tour/</loc>
     <lastmod>2015-03-17T15:36:56+00:00</lastmod>
   </url>
   
@@ -198,17 +203,7 @@
   </url>
   
   <url>
-    <loc>/mongo-java-driver/3.1/driver/getting-started/quick-tour/</loc>
-    <lastmod>2015-03-17T15:36:56+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/mongo-java-driver/3.1/driver/reference/</loc>
-    <lastmod>2015-03-17T15:36:56+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/mongo-java-driver/3.1/driver-async/getting-started/</loc>
     <lastmod>2015-03-17T15:36:56+00:00</lastmod>
   </url>
   
@@ -218,7 +213,12 @@
   </url>
   
   <url>
-    <loc>/mongo-java-driver/3.1/driver-async/</loc>
+    <loc>/mongo-java-driver/3.1/driver-async/getting-started/quick-tour-admin/</loc>
+    <lastmod>2015-03-17T15:36:56+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/mongo-java-driver/3.1/driver-async/getting-started/</loc>
     <lastmod>2015-03-17T15:36:56+00:00</lastmod>
   </url>
   
@@ -228,7 +228,7 @@
   </url>
   
   <url>
-    <loc>/mongo-java-driver/3.1/driver-async/getting-started/quick-tour-admin/</loc>
+    <loc>/mongo-java-driver/3.1/driver-async/</loc>
     <lastmod>2015-03-17T15:36:56+00:00</lastmod>
   </url>
   

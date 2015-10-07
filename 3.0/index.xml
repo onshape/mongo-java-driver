@@ -10,97 +10,6 @@
     <atom:link href="/mongo-java-driver/3.0/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
-      <title>Extended JSON</title>
-      <link>/mongo-java-driver/3.0/bson/extended-json/</link>
-      <pubDate>Thu, 19 Mar 2015 14:27:51 -0400</pubDate>
-      
-      <guid>/mongo-java-driver/3.0/bson/extended-json/</guid>
-      <description>
-
-&lt;h2 id=&#34;mongodb-extended-json&#34;&gt;MongoDB Extended JSON&lt;/h2&gt;
-
-&lt;p&gt;As discussed earlier, the Java driver supports reading and writing BSON documents represented as&lt;br /&gt;
-&lt;a href=&#34;http://docs.mongodb.org/manual/reference/mongodb-extended-json/&#34;&gt;MongoDB Extended JSON&lt;/a&gt;.  Both variants are supported:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Strict Mode: representations of BSON types that conform to the &lt;a href=&#34;http://www.json.org/&#34;&gt;JSON RFC&lt;/a&gt;. This is the
-format that &lt;a href=&#34;http://docs.mongodb.org/manual/reference/program/mongoexport/&#34;&gt;mongoexport&lt;/a&gt; produces and
-&lt;a href=&#34;http://docs.mongodb.org/manual/reference/program/mongoimport/&#34;&gt;mongoimport&lt;/a&gt; consumes.&lt;/li&gt;
-&lt;li&gt;Shell Mode: a superset of JSON that the
-&lt;a href=&#34;http://docs.mongodb.org/manual/tutorial/getting-started-with-the-mongo-shell/&#34;&gt;MongoDB shell&lt;/a&gt; can parse.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Furthermore, the &lt;code&gt;Document&lt;/code&gt; class provides two sets of convenience methods for this purpose:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;toJson(): a set of overloaded methods that convert a &lt;code&gt;Document&lt;/code&gt; instance to a JSON string&lt;/li&gt;
-&lt;li&gt;parse(): a set of overloaded static factory methods that convert a JSON string to a &lt;code&gt;Document&lt;/code&gt; instance&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;writing-json&#34;&gt;Writing JSON&lt;/h2&gt;
-
-&lt;p&gt;Consider the task of implementing a &lt;a href=&#34;http://docs.mongodb.org/manual/reference/program/mongoexport/&#34;&gt;mongoexport&lt;/a&gt;-like tool using the
-Java driver.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;String outputFilename;                 // initialize to the path of the file to write to
-MongoCollection&amp;lt;Document&amp;gt; collection;  // initialize to the collection from which you want to query
-
-BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename));
-
-try {
-    for (Document doc : collection.find()) {
-        writer.write(doc.toJson());
-        writer.newLine();
-} finally {
-   writer.close();
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The &lt;code&gt;Document.toJson()&lt;/code&gt; method constructs an instance of a &lt;code&gt;JsonWriter&lt;/code&gt; with its default settings, which will write in strict mode with
-no new lines or indentation.&lt;/p&gt;
-
-&lt;p&gt;You can override this default behavior by using one of the overloads of &lt;code&gt;toJson()&lt;/code&gt;.  As an example, consider the task of writing a
- JSON string that can be copied and pasted into the MongoDB shell:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;SimpleDateFormat fmt = new SimpleDateFormat(&amp;quot;dd/MM/yy&amp;quot;);
-Date first = fmt.parse(&amp;quot;01/01/2014&amp;quot;);
-Date second = fmt.parse(&amp;quot;01/01/2015&amp;quot;);
-Document doc = new Document(&amp;quot;startDate&amp;quot;, new Document(&amp;quot;$gt&amp;quot;, first).append(&amp;quot;$lt&amp;quot;, second)); 
-System.out.println(doc.toJson(new JsonWriterSettings(JsonMode.SHELL))); 
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This code snippet will print out MongoDB shell-compatible JSON, which can then be pasted into the shell:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-javascript&#34;&gt;{ &amp;quot;startDate&amp;quot; : { &amp;quot;$gt&amp;quot; : ISODate(&amp;quot;2014-01-01T05:00:00.000Z&amp;quot;), &amp;quot;$lt&amp;quot; : ISODate(&amp;quot;2015-01-01T05:00:00.000Z&amp;quot;) } }
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;reading-json&#34;&gt;Reading JSON&lt;/h2&gt;
-
-&lt;p&gt;Consider the task of implementing a &lt;a href=&#34;http://docs.mongodb.org/manual/reference/program/mongoimport/&#34;&gt;mongoimport&lt;/a&gt;-like tool using the
-Java driver.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;String inputFilename;                  // initialize to the path of the file to read from
-MongoCollection&amp;lt;Document&amp;gt; collection;  // initialize to the collection to which you want to write
-
-BufferedReader reader = new BufferedReader(new FileReader(inputFilename));
-
-try {
-    String json;
-
-    while ((json = reader.readLine()) != null) {
-        collection.insertOne(Document.parse(json));
-    } 
-} finally {
-    reader.close();
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The &lt;code&gt;Document.parse()&lt;/code&gt; static factory method constructs an instance of a &lt;code&gt;JsonReader&lt;/code&gt; with the given string and returns an instance of an
-equivalent Document instance. &lt;code&gt;JsonReader&lt;/code&gt; automatically detects the JSON flavor in the string, so you do not need to specify it.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
       <title>Codec and CodecRegistry</title>
       <link>/mongo-java-driver/3.0/bson/codecs/</link>
       <pubDate>Thu, 19 Mar 2015 14:27:51 -0400</pubDate>
@@ -261,6 +170,97 @@ takes a list of &lt;code&gt;CodecRegistry&lt;/code&gt;s.&lt;/p&gt;
     </item>
     
     <item>
+      <title>Extended JSON</title>
+      <link>/mongo-java-driver/3.0/bson/extended-json/</link>
+      <pubDate>Thu, 19 Mar 2015 14:27:51 -0400</pubDate>
+      
+      <guid>/mongo-java-driver/3.0/bson/extended-json/</guid>
+      <description>
+
+&lt;h2 id=&#34;mongodb-extended-json&#34;&gt;MongoDB Extended JSON&lt;/h2&gt;
+
+&lt;p&gt;As discussed earlier, the Java driver supports reading and writing BSON documents represented as&lt;br /&gt;
+&lt;a href=&#34;http://docs.mongodb.org/manual/reference/mongodb-extended-json/&#34;&gt;MongoDB Extended JSON&lt;/a&gt;.  Both variants are supported:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Strict Mode: representations of BSON types that conform to the &lt;a href=&#34;http://www.json.org/&#34;&gt;JSON RFC&lt;/a&gt;. This is the
+format that &lt;a href=&#34;http://docs.mongodb.org/manual/reference/program/mongoexport/&#34;&gt;mongoexport&lt;/a&gt; produces and
+&lt;a href=&#34;http://docs.mongodb.org/manual/reference/program/mongoimport/&#34;&gt;mongoimport&lt;/a&gt; consumes.&lt;/li&gt;
+&lt;li&gt;Shell Mode: a superset of JSON that the
+&lt;a href=&#34;http://docs.mongodb.org/manual/tutorial/getting-started-with-the-mongo-shell/&#34;&gt;MongoDB shell&lt;/a&gt; can parse.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Furthermore, the &lt;code&gt;Document&lt;/code&gt; class provides two sets of convenience methods for this purpose:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;toJson(): a set of overloaded methods that convert a &lt;code&gt;Document&lt;/code&gt; instance to a JSON string&lt;/li&gt;
+&lt;li&gt;parse(): a set of overloaded static factory methods that convert a JSON string to a &lt;code&gt;Document&lt;/code&gt; instance&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;writing-json&#34;&gt;Writing JSON&lt;/h2&gt;
+
+&lt;p&gt;Consider the task of implementing a &lt;a href=&#34;http://docs.mongodb.org/manual/reference/program/mongoexport/&#34;&gt;mongoexport&lt;/a&gt;-like tool using the
+Java driver.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;String outputFilename;                 // initialize to the path of the file to write to
+MongoCollection&amp;lt;Document&amp;gt; collection;  // initialize to the collection from which you want to query
+
+BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename));
+
+try {
+    for (Document doc : collection.find()) {
+        writer.write(doc.toJson());
+        writer.newLine();
+} finally {
+   writer.close();
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The &lt;code&gt;Document.toJson()&lt;/code&gt; method constructs an instance of a &lt;code&gt;JsonWriter&lt;/code&gt; with its default settings, which will write in strict mode with
+no new lines or indentation.&lt;/p&gt;
+
+&lt;p&gt;You can override this default behavior by using one of the overloads of &lt;code&gt;toJson()&lt;/code&gt;.  As an example, consider the task of writing a
+ JSON string that can be copied and pasted into the MongoDB shell:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;SimpleDateFormat fmt = new SimpleDateFormat(&amp;quot;dd/MM/yy&amp;quot;);
+Date first = fmt.parse(&amp;quot;01/01/2014&amp;quot;);
+Date second = fmt.parse(&amp;quot;01/01/2015&amp;quot;);
+Document doc = new Document(&amp;quot;startDate&amp;quot;, new Document(&amp;quot;$gt&amp;quot;, first).append(&amp;quot;$lt&amp;quot;, second)); 
+System.out.println(doc.toJson(new JsonWriterSettings(JsonMode.SHELL))); 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This code snippet will print out MongoDB shell-compatible JSON, which can then be pasted into the shell:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-javascript&#34;&gt;{ &amp;quot;startDate&amp;quot; : { &amp;quot;$gt&amp;quot; : ISODate(&amp;quot;2014-01-01T05:00:00.000Z&amp;quot;), &amp;quot;$lt&amp;quot; : ISODate(&amp;quot;2015-01-01T05:00:00.000Z&amp;quot;) } }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;reading-json&#34;&gt;Reading JSON&lt;/h2&gt;
+
+&lt;p&gt;Consider the task of implementing a &lt;a href=&#34;http://docs.mongodb.org/manual/reference/program/mongoimport/&#34;&gt;mongoimport&lt;/a&gt;-like tool using the
+Java driver.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;String inputFilename;                  // initialize to the path of the file to read from
+MongoCollection&amp;lt;Document&amp;gt; collection;  // initialize to the collection to which you want to write
+
+BufferedReader reader = new BufferedReader(new FileReader(inputFilename));
+
+try {
+    String json;
+
+    while ((json = reader.readLine()) != null) {
+        collection.insertOne(Document.parse(json));
+    } 
+} finally {
+    reader.close();
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The &lt;code&gt;Document.parse()&lt;/code&gt; static factory method constructs an instance of a &lt;code&gt;JsonReader&lt;/code&gt; with the given string and returns an instance of an
+equivalent Document instance. &lt;code&gt;JsonReader&lt;/code&gt; automatically detects the JSON flavor in the string, so you do not need to specify it.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Documents</title>
       <link>/mongo-java-driver/3.0/bson/documents/</link>
       <pubDate>Thu, 19 Mar 2015 14:27:51 -0400</pubDate>
@@ -411,204 +411,6 @@ collection.find(new BasicDBObject(&amp;quot;x&amp;quot;, 1));
     </item>
     
     <item>
-      <title>Projections</title>
-      <link>/mongo-java-driver/3.0/builders/projections/</link>
-      <pubDate>Thu, 19 Mar 2015 14:27:51 -0400</pubDate>
-      
-      <guid>/mongo-java-driver/3.0/builders/projections/</guid>
-      <description>
-
-&lt;h2 id=&#34;filters&#34;&gt;Filters&lt;/h2&gt;
-
-&lt;p&gt;The &lt;a href=&#34;http://api.mongodb.org/java/3.0/?com/mongodb/client/model/Projections.html
-&#34;&gt;&lt;code&gt;Projections&lt;/code&gt;&lt;/a&gt; class provides static factory methods for all the MongoDB
-projection opererators.  Each method returns an instance of the &lt;a href=&#34;/mongo-java-driver/3.0/mongo-java-driver/3.0/bson/documents/#bson&#34;&gt;&lt;code&gt;Bson&lt;/code&gt;&lt;/a&gt; type, which can in turn
-be passed to any method that expects a projection.&lt;/p&gt;
-
-&lt;p&gt;For brevity, you may choose to import the methods of the &lt;code&gt;Projections&lt;/code&gt; class statically:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;import static com.mongodb.client.model.Projections.*;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;All the examples below assume this static import.&lt;/p&gt;
-
-&lt;h3 id=&#34;inclusion&#34;&gt;Inclusion&lt;/h3&gt;
-
-&lt;p&gt;By default, all fields of each document are projected.  To specify the inclusion of one or more fields (which implicitly excludes all
-other fields except &lt;code&gt;_id&lt;/code&gt;), use the &lt;code&gt;include&lt;/code&gt; method.&lt;/p&gt;
-
-&lt;p&gt;This example includes the &lt;code&gt;quantity&lt;/code&gt; field and (implicitly) the &lt;code&gt;_id&lt;/code&gt; field:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;include(&amp;quot;quantity&amp;quot;)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This example includes the &lt;code&gt;quantity&lt;/code&gt; and &lt;code&gt;totalAmount&lt;/code&gt; fields and (implicitly) the &lt;code&gt;_id&lt;/code&gt; field:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;include(&amp;quot;quantity&amp;quot;, &amp;quot;totalAmount&amp;quot;)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;exclusion&#34;&gt;Exclusion&lt;/h3&gt;
-
-&lt;p&gt;To specify the exclusion of one or more fields (which implicitly includes all other fields), use the &lt;code&gt;exclude&lt;/code&gt; method.&lt;/p&gt;
-
-&lt;p&gt;This example excludes the &lt;code&gt;quantity&lt;/code&gt; field:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;exclude(&amp;quot;quantity&amp;quot;)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This example excludes the &lt;code&gt;quantity&lt;/code&gt; and &lt;code&gt;totalAmount&lt;/code&gt; fields:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;exclude(&amp;quot;quantity&amp;quot;, &amp;quot;totalAmount&amp;quot;)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;exclusion-of-id&#34;&gt;Exclusion of _id&lt;/h3&gt;
-
-&lt;p&gt;To specify the exclusion of the &lt;code&gt;_id&lt;/code&gt; field, use the &lt;code&gt;excludeId&lt;/code&gt; method:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;excludeId()
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;which is just shorthand for:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;exclude(&amp;quot;_id&amp;quot;)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;array-element-match-with-a-supplied-filter&#34;&gt;Array Element Match with a Supplied Filter&lt;/h3&gt;
-
-&lt;p&gt;To specify a projection that includes only the first element of an array that matches a supplied query filter (the
-&lt;a href=&#34;http://docs.mongodb.org/manual/reference/operator/projection/elemMatch
-&#34;&gt;elemMatch&lt;/a&gt; operator), use the &lt;code&gt;elemMatch&lt;/code&gt; method that takes a
-field name and a filter.&lt;/p&gt;
-
-&lt;p&gt;This example projects the first element of the &lt;code&gt;orders&lt;/code&gt; array where the &lt;code&gt;quantity&lt;/code&gt; field is greater that &lt;code&gt;3&lt;/code&gt;:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;elemMatch(&amp;quot;orders&amp;quot;, Filters.gt(&amp;quot;quantity&amp;quot;, 3))
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;array-element-match-with-an-implicit-filter&#34;&gt;Array Element Match with an Implicit Filter&lt;/h3&gt;
-
-&lt;p&gt;To specify a projection that includes only the first element of an array that matches the filter supplied as part of the query (the
-&lt;a href=&#34;http://docs.mongodb.org/manual/reference/operator/projection/positional/#projection
-&#34;&gt;positional $ operator&lt;/a&gt;), use the &lt;code&gt;elemMatch&lt;/code&gt; method that takes
-just a field name.&lt;/p&gt;
-
-&lt;p&gt;This example projects the first element of the &lt;code&gt;orders&lt;/code&gt; array that matches the query filter:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;elemMatch(&amp;quot;orders&amp;quot;)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;slice&#34;&gt;Slice&lt;/h3&gt;
-
-&lt;p&gt;To project &lt;a href=&#34;http://docs.mongodb.org/manual/reference/operator/projection/slice
-&#34;&gt;a slice of an array&lt;/a&gt;, use one of the &lt;code&gt;slice&lt;/code&gt; methods.&lt;/p&gt;
-
-&lt;p&gt;This example projects the first &lt;code&gt;7&lt;/code&gt; elements of the &lt;code&gt;tags&lt;/code&gt; array:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;slice(&amp;quot;tags&amp;quot;, 7)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This example skips the first &lt;code&gt;2&lt;/code&gt; elements of the &lt;code&gt;tags&lt;/code&gt; array and projects the next &lt;code&gt;5&lt;/code&gt;:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;slice(&amp;quot;tags&amp;quot;, 2, 5)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;text-score&#34;&gt;Text Score&lt;/h3&gt;
-
-&lt;p&gt;To specify a projection of &lt;a href=&#34;http://docs.mongodb.org/manual/reference/operator/query/text/#return-the-text-search-score
-&#34;&gt;the score of a &lt;code&gt;$text&lt;/code&gt; query&lt;/a&gt;,
-use the &lt;code&gt;metaTextScore&lt;/code&gt; method to specify the name of the projected field.&lt;/p&gt;
-
-&lt;p&gt;This example projects the text score as the value of the &lt;code&gt;score&lt;/code&gt; field:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;metaTextScore(&amp;quot;score&amp;quot;)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;combining-projections&#34;&gt;Combining Projections&lt;/h3&gt;
-
-&lt;p&gt;To combine multiple projections, use the &lt;code&gt;fields&lt;/code&gt; method.&lt;/p&gt;
-
-&lt;p&gt;This example includes the &lt;code&gt;quantity&lt;/code&gt; and &lt;code&gt;totalAmount&lt;/code&gt; fields and excludes the &lt;code&gt;_id&lt;/code&gt; field:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;fields(include(&amp;quot;quantity&amp;quot;, &amp;quot;totalAmount&amp;quot;), excludeId()) 
-&lt;/code&gt;&lt;/pre&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Sort Criteria  </title>
-      <link>/mongo-java-driver/3.0/builders/sorts/</link>
-      <pubDate>Thu, 19 Mar 2015 14:27:51 -0400</pubDate>
-      
-      <guid>/mongo-java-driver/3.0/builders/sorts/</guid>
-      <description>
-
-&lt;h2 id=&#34;sorts&#34;&gt;Sorts&lt;/h2&gt;
-
-&lt;p&gt;The &lt;a href=&#34;http://api.mongodb.org/java/3.0/?com/mongodb/client/model/Sorts.html
-&#34;&gt;&lt;code&gt;Sorts&lt;/code&gt;&lt;/a&gt; class provides static factory methods for all the MongoDB sort criteria
-operators.  Each method returns an instance of the &lt;a href=&#34;/mongo-java-driver/3.0/mongo-java-driver/3.0/bson/documents/#bson&#34;&gt;&lt;code&gt;Bson&lt;/code&gt;&lt;/a&gt; type, which can in turn be passed to
-any method that expects sort criteria.&lt;/p&gt;
-
-&lt;p&gt;For brevity, you may choose to import the methods of the &lt;code&gt;Sorts&lt;/code&gt; class statically:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;import com.mongodb.client.model.Sorts.*;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;All the examples below assume this static import.&lt;/p&gt;
-
-&lt;h3 id=&#34;ascending&#34;&gt;Ascending&lt;/h3&gt;
-
-&lt;p&gt;To specify an ascending sort, use one of the &lt;code&gt;ascending&lt;/code&gt; methods.&lt;/p&gt;
-
-&lt;p&gt;This example specifies an ascending sort on the &lt;code&gt;quantity&lt;/code&gt; field:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;ascending(&amp;quot;quantity&amp;quot;)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This example specifies an ascending sort on the &lt;code&gt;quantity&lt;/code&gt; field, followed by an ascending sort on the &lt;code&gt;totalAmount&lt;/code&gt; field:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;ascending(&amp;quot;quantity&amp;quot;, &amp;quot;totalAmount&amp;quot;) 
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;descending&#34;&gt;Descending&lt;/h3&gt;
-
-&lt;p&gt;To specify a descending sort, use one of the &lt;code&gt;descending&lt;/code&gt; methods.&lt;/p&gt;
-
-&lt;p&gt;This example specifies a descending sort on the &lt;code&gt;quantity&lt;/code&gt; field:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;descending(&amp;quot;quantity&amp;quot;)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This example specifies a descending sort on the &lt;code&gt;quantity&lt;/code&gt; field, followed by a descending sort on the &lt;code&gt;totalAmount&lt;/code&gt; field:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;descending(&amp;quot;quantity&amp;quot;, &amp;quot;totalAmount&amp;quot;) 
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;text-score&#34;&gt;Text Score&lt;/h3&gt;
-
-&lt;p&gt;To specify a sort by &lt;a href=&#34;http://docs.mongodb.org/manual/reference/operator/query/text/#sort-by-text-search-score
-&#34;&gt;the score of a &lt;code&gt;$text&lt;/code&gt; query&lt;/a&gt;, use the
-&lt;code&gt;metaTextScore&lt;/code&gt; method to specify the name of the projected field.&lt;/p&gt;
-
-&lt;p&gt;This example specifies a sort on the score of a &lt;code&gt;$text&lt;/code&gt; query that will be projected into the &lt;code&gt;scoreValue&lt;/code&gt; field in a projection on the
-same query:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;metaTextScore(&amp;quot;scoreValue&amp;quot;)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;combining-sort-criteria&#34;&gt;Combining sort criteria&lt;/h3&gt;
-
-&lt;p&gt;To specify the combination of multiple sort criteria, use the &lt;code&gt;orderBy&lt;/code&gt; method.&lt;/p&gt;
-
-&lt;p&gt;This example specifies an ascending sort on the &lt;code&gt;quantity&lt;/code&gt; field, followed by an ascending sort on the &lt;code&gt;totalAmount&lt;/code&gt; field, followed by a
-descending sort on the &lt;code&gt;orderDate&lt;/code&gt; field:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;orderBy(ascending(&amp;quot;quantity&amp;quot;, &amp;quot;totalAmount&amp;quot;), descending(&amp;quot;orderDate&amp;quot;))
-&lt;/code&gt;&lt;/pre&gt;
-</description>
-    </item>
-    
-    <item>
       <title>Readers and Writers</title>
       <link>/mongo-java-driver/3.0/bson/readers-and-writers/</link>
       <pubDate>Thu, 19 Mar 2015 14:27:51 -0400</pubDate>
@@ -745,6 +547,130 @@ there is no field name to read, only a series of values.&lt;/p&gt;
 document as a stream of bytes in accordance with the &lt;a href=&#34;http://www.bsonspec.org&#34;&gt;BSON&lt;/a&gt; specification, while &lt;code&gt;JsonReader&lt;/code&gt; reads the BSON
 document as a stream of characters in accordance with
 &lt;a href=&#34;http://docs.mongodb.org/manual/reference/mongodb-extended-json/&#34;&gt;MongoDB Extended JSON&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Projections</title>
+      <link>/mongo-java-driver/3.0/builders/projections/</link>
+      <pubDate>Thu, 19 Mar 2015 14:27:51 -0400</pubDate>
+      
+      <guid>/mongo-java-driver/3.0/builders/projections/</guid>
+      <description>
+
+&lt;h2 id=&#34;filters&#34;&gt;Filters&lt;/h2&gt;
+
+&lt;p&gt;The &lt;a href=&#34;http://api.mongodb.org/java/3.0/?com/mongodb/client/model/Projections.html
+&#34;&gt;&lt;code&gt;Projections&lt;/code&gt;&lt;/a&gt; class provides static factory methods for all the MongoDB
+projection opererators.  Each method returns an instance of the &lt;a href=&#34;/mongo-java-driver/3.0/mongo-java-driver/3.0/bson/documents/#bson&#34;&gt;&lt;code&gt;Bson&lt;/code&gt;&lt;/a&gt; type, which can in turn
+be passed to any method that expects a projection.&lt;/p&gt;
+
+&lt;p&gt;For brevity, you may choose to import the methods of the &lt;code&gt;Projections&lt;/code&gt; class statically:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;import static com.mongodb.client.model.Projections.*;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;All the examples below assume this static import.&lt;/p&gt;
+
+&lt;h3 id=&#34;inclusion&#34;&gt;Inclusion&lt;/h3&gt;
+
+&lt;p&gt;By default, all fields of each document are projected.  To specify the inclusion of one or more fields (which implicitly excludes all
+other fields except &lt;code&gt;_id&lt;/code&gt;), use the &lt;code&gt;include&lt;/code&gt; method.&lt;/p&gt;
+
+&lt;p&gt;This example includes the &lt;code&gt;quantity&lt;/code&gt; field and (implicitly) the &lt;code&gt;_id&lt;/code&gt; field:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;include(&amp;quot;quantity&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This example includes the &lt;code&gt;quantity&lt;/code&gt; and &lt;code&gt;totalAmount&lt;/code&gt; fields and (implicitly) the &lt;code&gt;_id&lt;/code&gt; field:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;include(&amp;quot;quantity&amp;quot;, &amp;quot;totalAmount&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;exclusion&#34;&gt;Exclusion&lt;/h3&gt;
+
+&lt;p&gt;To specify the exclusion of one or more fields (which implicitly includes all other fields), use the &lt;code&gt;exclude&lt;/code&gt; method.&lt;/p&gt;
+
+&lt;p&gt;This example excludes the &lt;code&gt;quantity&lt;/code&gt; field:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;exclude(&amp;quot;quantity&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This example excludes the &lt;code&gt;quantity&lt;/code&gt; and &lt;code&gt;totalAmount&lt;/code&gt; fields:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;exclude(&amp;quot;quantity&amp;quot;, &amp;quot;totalAmount&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;exclusion-of-id&#34;&gt;Exclusion of _id&lt;/h3&gt;
+
+&lt;p&gt;To specify the exclusion of the &lt;code&gt;_id&lt;/code&gt; field, use the &lt;code&gt;excludeId&lt;/code&gt; method:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;excludeId()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;which is just shorthand for:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;exclude(&amp;quot;_id&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;array-element-match-with-a-supplied-filter&#34;&gt;Array Element Match with a Supplied Filter&lt;/h3&gt;
+
+&lt;p&gt;To specify a projection that includes only the first element of an array that matches a supplied query filter (the
+&lt;a href=&#34;http://docs.mongodb.org/manual/reference/operator/projection/elemMatch
+&#34;&gt;elemMatch&lt;/a&gt; operator), use the &lt;code&gt;elemMatch&lt;/code&gt; method that takes a
+field name and a filter.&lt;/p&gt;
+
+&lt;p&gt;This example projects the first element of the &lt;code&gt;orders&lt;/code&gt; array where the &lt;code&gt;quantity&lt;/code&gt; field is greater that &lt;code&gt;3&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;elemMatch(&amp;quot;orders&amp;quot;, Filters.gt(&amp;quot;quantity&amp;quot;, 3))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;array-element-match-with-an-implicit-filter&#34;&gt;Array Element Match with an Implicit Filter&lt;/h3&gt;
+
+&lt;p&gt;To specify a projection that includes only the first element of an array that matches the filter supplied as part of the query (the
+&lt;a href=&#34;http://docs.mongodb.org/manual/reference/operator/projection/positional/#projection
+&#34;&gt;positional $ operator&lt;/a&gt;), use the &lt;code&gt;elemMatch&lt;/code&gt; method that takes
+just a field name.&lt;/p&gt;
+
+&lt;p&gt;This example projects the first element of the &lt;code&gt;orders&lt;/code&gt; array that matches the query filter:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;elemMatch(&amp;quot;orders&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;slice&#34;&gt;Slice&lt;/h3&gt;
+
+&lt;p&gt;To project &lt;a href=&#34;http://docs.mongodb.org/manual/reference/operator/projection/slice
+&#34;&gt;a slice of an array&lt;/a&gt;, use one of the &lt;code&gt;slice&lt;/code&gt; methods.&lt;/p&gt;
+
+&lt;p&gt;This example projects the first &lt;code&gt;7&lt;/code&gt; elements of the &lt;code&gt;tags&lt;/code&gt; array:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;slice(&amp;quot;tags&amp;quot;, 7)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This example skips the first &lt;code&gt;2&lt;/code&gt; elements of the &lt;code&gt;tags&lt;/code&gt; array and projects the next &lt;code&gt;5&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;slice(&amp;quot;tags&amp;quot;, 2, 5)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;text-score&#34;&gt;Text Score&lt;/h3&gt;
+
+&lt;p&gt;To specify a projection of &lt;a href=&#34;http://docs.mongodb.org/manual/reference/operator/query/text/#return-the-text-search-score
+&#34;&gt;the score of a &lt;code&gt;$text&lt;/code&gt; query&lt;/a&gt;,
+use the &lt;code&gt;metaTextScore&lt;/code&gt; method to specify the name of the projected field.&lt;/p&gt;
+
+&lt;p&gt;This example projects the text score as the value of the &lt;code&gt;score&lt;/code&gt; field:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;metaTextScore(&amp;quot;score&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;combining-projections&#34;&gt;Combining Projections&lt;/h3&gt;
+
+&lt;p&gt;To combine multiple projections, use the &lt;code&gt;fields&lt;/code&gt; method.&lt;/p&gt;
+
+&lt;p&gt;This example includes the &lt;code&gt;quantity&lt;/code&gt; and &lt;code&gt;totalAmount&lt;/code&gt; fields and excludes the &lt;code&gt;_id&lt;/code&gt; field:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;fields(include(&amp;quot;quantity&amp;quot;, &amp;quot;totalAmount&amp;quot;), excludeId()) 
+&lt;/code&gt;&lt;/pre&gt;
 </description>
     </item>
     
@@ -900,6 +826,80 @@ is equal to &lt;code&gt;true&lt;/code&gt; or the &lt;code&gt;qty&lt;/code&gt; fi
 containing the term &lt;code&gt;coffee&lt;/code&gt;:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;text(&amp;quot;abstract&amp;quot;, &amp;quot;coffee&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Sort Criteria  </title>
+      <link>/mongo-java-driver/3.0/builders/sorts/</link>
+      <pubDate>Thu, 19 Mar 2015 14:27:51 -0400</pubDate>
+      
+      <guid>/mongo-java-driver/3.0/builders/sorts/</guid>
+      <description>
+
+&lt;h2 id=&#34;sorts&#34;&gt;Sorts&lt;/h2&gt;
+
+&lt;p&gt;The &lt;a href=&#34;http://api.mongodb.org/java/3.0/?com/mongodb/client/model/Sorts.html
+&#34;&gt;&lt;code&gt;Sorts&lt;/code&gt;&lt;/a&gt; class provides static factory methods for all the MongoDB sort criteria
+operators.  Each method returns an instance of the &lt;a href=&#34;/mongo-java-driver/3.0/mongo-java-driver/3.0/bson/documents/#bson&#34;&gt;&lt;code&gt;Bson&lt;/code&gt;&lt;/a&gt; type, which can in turn be passed to
+any method that expects sort criteria.&lt;/p&gt;
+
+&lt;p&gt;For brevity, you may choose to import the methods of the &lt;code&gt;Sorts&lt;/code&gt; class statically:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;import com.mongodb.client.model.Sorts.*;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;All the examples below assume this static import.&lt;/p&gt;
+
+&lt;h3 id=&#34;ascending&#34;&gt;Ascending&lt;/h3&gt;
+
+&lt;p&gt;To specify an ascending sort, use one of the &lt;code&gt;ascending&lt;/code&gt; methods.&lt;/p&gt;
+
+&lt;p&gt;This example specifies an ascending sort on the &lt;code&gt;quantity&lt;/code&gt; field:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;ascending(&amp;quot;quantity&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This example specifies an ascending sort on the &lt;code&gt;quantity&lt;/code&gt; field, followed by an ascending sort on the &lt;code&gt;totalAmount&lt;/code&gt; field:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;ascending(&amp;quot;quantity&amp;quot;, &amp;quot;totalAmount&amp;quot;) 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;descending&#34;&gt;Descending&lt;/h3&gt;
+
+&lt;p&gt;To specify a descending sort, use one of the &lt;code&gt;descending&lt;/code&gt; methods.&lt;/p&gt;
+
+&lt;p&gt;This example specifies a descending sort on the &lt;code&gt;quantity&lt;/code&gt; field:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;descending(&amp;quot;quantity&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This example specifies a descending sort on the &lt;code&gt;quantity&lt;/code&gt; field, followed by a descending sort on the &lt;code&gt;totalAmount&lt;/code&gt; field:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;descending(&amp;quot;quantity&amp;quot;, &amp;quot;totalAmount&amp;quot;) 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;text-score&#34;&gt;Text Score&lt;/h3&gt;
+
+&lt;p&gt;To specify a sort by &lt;a href=&#34;http://docs.mongodb.org/manual/reference/operator/query/text/#sort-by-text-search-score
+&#34;&gt;the score of a &lt;code&gt;$text&lt;/code&gt; query&lt;/a&gt;, use the
+&lt;code&gt;metaTextScore&lt;/code&gt; method to specify the name of the projected field.&lt;/p&gt;
+
+&lt;p&gt;This example specifies a sort on the score of a &lt;code&gt;$text&lt;/code&gt; query that will be projected into the &lt;code&gt;scoreValue&lt;/code&gt; field in a projection on the
+same query:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;metaTextScore(&amp;quot;scoreValue&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;combining-sort-criteria&#34;&gt;Combining sort criteria&lt;/h3&gt;
+
+&lt;p&gt;To specify the combination of multiple sort criteria, use the &lt;code&gt;orderBy&lt;/code&gt; method.&lt;/p&gt;
+
+&lt;p&gt;This example specifies an ascending sort on the &lt;code&gt;quantity&lt;/code&gt; field, followed by an ascending sort on the &lt;code&gt;totalAmount&lt;/code&gt; field, followed by a
+descending sort on the &lt;code&gt;orderDate&lt;/code&gt; field:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;orderBy(ascending(&amp;quot;quantity&amp;quot;, &amp;quot;totalAmount&amp;quot;), descending(&amp;quot;orderDate&amp;quot;))
 &lt;/code&gt;&lt;/pre&gt;
 </description>
     </item>

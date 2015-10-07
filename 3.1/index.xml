@@ -525,6 +525,155 @@ Demand for results is signaled via the &lt;code&gt;Subscription&lt;/code&gt; and
     </item>
     
     <item>
+      <title>Documents</title>
+      <link>/mongo-java-driver/3.1/bson/documents/</link>
+      <pubDate>Thu, 19 Mar 2015 14:27:51 -0400</pubDate>
+      
+      <guid>/mongo-java-driver/3.1/bson/documents/</guid>
+      <description>
+
+&lt;h2 id=&#34;documents&#34;&gt;Documents&lt;/h2&gt;
+
+&lt;p&gt;The driver includes several classes and interfaces used for representing BSON documents.&lt;/p&gt;
+
+&lt;h3 id=&#34;bsondocument&#34;&gt;BsonDocument&lt;/h3&gt;
+
+&lt;p&gt;Although generally not needed by users of the high-level driver API, the &lt;a href=&#34;http://api.mongodb.org/java/3.1/?org/bson/BsonDocument.html
+&#34;&gt;&lt;code&gt;BsonDocument&lt;/code&gt;&lt;/a&gt; class is
+central to the way that documents are managed internally by the driver.  The &lt;code&gt;BsonDocument&lt;/code&gt; class can represent dynamically structured
+documents of any complexity with a type-safe API.  For instance, the document&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-javascript&#34;&gt;{ 
+  &amp;quot;a&amp;quot; : &amp;quot;MongoDB&amp;quot;, 
+  &amp;quot;b&amp;quot; : [ 1, 2 ] 
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;can be constructed as a BsonDocument as follows:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;new BsonDocument().append(&amp;quot;a&amp;quot;, new BsonString(&amp;quot;MongoDB&amp;quot;))
+                  .append(&amp;quot;b&amp;quot;, new BsonArray(Arrays.asList(new BsonInt32(1), new BsonInt32(2))));
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The type safety comes from &lt;code&gt;BsonDocument&lt;/code&gt; implementing &lt;code&gt;Map&amp;lt;String, BsonValue&amp;gt;&lt;/code&gt;, so even built-in types like &lt;code&gt;int&lt;/code&gt;, &lt;code&gt;String&lt;/code&gt; and &lt;code&gt;List&lt;/code&gt; must
+be wrapped in a sub-class of &lt;code&gt;BsonValue&lt;/code&gt;.  For a complete list of &lt;code&gt;BsonValue&lt;/code&gt; sub-types, please consult the
+&lt;a href=&#34;http://api.mongodb.org/java/3.1/?&#34;&gt;&lt;code&gt;BsonValue&lt;/code&gt;&lt;/a&gt; API documentation.&lt;/p&gt;
+
+&lt;h3 id=&#34;document&#34;&gt;Document&lt;/h3&gt;
+
+&lt;p&gt;Most applications will use the &lt;a href=&#34;http://api.mongodb.org/java/3.1/?org/bson/Document.html
+&#34;&gt;&lt;code&gt;Document&lt;/code&gt;&lt;/a&gt; class instead.  Like &lt;code&gt;BsonDocument&lt;/code&gt;, the
+&lt;code&gt;Document&lt;/code&gt; class can represent dynamically structured documents of any complexity; however, the typing is much looser, as &lt;code&gt;Document&lt;/code&gt;
+implements &lt;code&gt;Map&amp;lt;String, Object&amp;gt;&lt;/code&gt;. As a result, the same document as above can be constructed using the Document class as follows:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;new Document().append(&amp;quot;a&amp;quot;, &amp;quot;MongoDB&amp;quot;)
+              .append(&amp;quot;b&amp;quot;, Arrays.asList(1, 2));
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;There is less code to write, but runtime errors are possible if you inadvertently add an instance of an unsupported value type.&lt;/p&gt;
+
+&lt;p&gt;The most commonly used value types are:&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;BSON type&lt;/th&gt;
+&lt;th&gt;Java type&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Document&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;org.bson.Document&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Array&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;java.util.List&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Date&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;java.util.Date&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Boolean&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;java.lang.Boolean&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Double&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;java.lang.Double&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Int32&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;java.lang.Integer&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Int64&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;java.lang.Long&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;String&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;java.lang.String&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Binary&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;org.bson.types.Binary&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;ObjectId&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;org.bson.types.ObjectId&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Null&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;null&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;It is actually possible to change these mappings; the mechanism for doing so is covered &lt;a href=&#34;/mongo-java-driver/3.1/mongo-java-driver/3.1/bson/codecs/&#34;&gt;later&lt;/a&gt; in this
+reference .&lt;/p&gt;
+
+&lt;h3 id=&#34;dbobject&#34;&gt;DBObject&lt;/h3&gt;
+
+&lt;p&gt;Although not recommended for new applications, those upgrading from the 2.x driver series may continue to use the
+&lt;a href=&#34;http://api.mongodb.org/java/3.1/?com/mongodb/DBObject.html
+&#34;&gt;&lt;code&gt;DBObject&lt;/code&gt;&lt;/a&gt; interface to represent BSON documents.  &lt;code&gt;DBObject&lt;/code&gt; is similar to Document in that it
+represents BSON values as &lt;code&gt;Object&lt;/code&gt;, but it has a few shortcomings that were impossible to overcome:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;it is an interface rather than a class, so it&amp;rsquo;s API can not be extended without breaking binary compatibility&lt;/li&gt;
+&lt;li&gt;it doesn&amp;rsquo;t actually implement &lt;code&gt;Map&amp;lt;String, Object&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;because it is an interface, a separate concrete class called &lt;a href=&#34;http://api.mongodb.org/java/3.1/?com/mongodb/BasicDBObject.html
+&#34;&gt;&lt;code&gt;BasicDBObject&lt;/code&gt;&lt;/a&gt; which
+implements that interface, is required&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;bson&#34;&gt;Bson&lt;/h3&gt;
+
+&lt;p&gt;To tie these all together, the driver contains a small but powerful interface called &lt;a href=&#34;http://api.mongodb.org/java/3.1/?org/bson/conversions/Bson.html
+&#34;&gt;&lt;code&gt;Bson&lt;/code&gt;&lt;/a&gt;.
+Any class that represents a BSON document, whether included in the driver itself or from a third party, can implement this interface and
+can then be used any place in the high-level API where a BSON document is required. The three classes discussed above all implement this
+interface and so can be used interchangeably based on the needs of a given application.  For example:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;collection.find(new BsonDocument(&amp;quot;x&amp;quot;, new BsonInt32(1)));
+collection.find(new Document(&amp;quot;x&amp;quot;, 1));
+collection.find(new BasicDBObject(&amp;quot;x&amp;quot;, 1));
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Codec and CodecRegistry</title>
       <link>/mongo-java-driver/3.1/bson/codecs/</link>
       <pubDate>Thu, 19 Mar 2015 14:27:51 -0400</pubDate>
@@ -776,152 +925,142 @@ equivalent Document instance. &lt;code&gt;JsonReader&lt;/code&gt; automatically 
     </item>
     
     <item>
-      <title>Documents</title>
-      <link>/mongo-java-driver/3.1/bson/documents/</link>
+      <title>Readers and Writers</title>
+      <link>/mongo-java-driver/3.1/bson/readers-and-writers/</link>
       <pubDate>Thu, 19 Mar 2015 14:27:51 -0400</pubDate>
       
-      <guid>/mongo-java-driver/3.1/bson/documents/</guid>
+      <guid>/mongo-java-driver/3.1/bson/readers-and-writers/</guid>
       <description>
 
-&lt;h2 id=&#34;documents&#34;&gt;Documents&lt;/h2&gt;
+&lt;h2 id=&#34;bsonwriter-and-bsonreader&#34;&gt;BsonWriter and BsonReader&lt;/h2&gt;
 
-&lt;p&gt;The driver includes several classes and interfaces used for representing BSON documents.&lt;/p&gt;
+&lt;p&gt;The various implementations of the &lt;code&gt;Bson&lt;/code&gt; interface discussed in the previous section all represent BSON documents using an underlying
+Java &lt;code&gt;Map&lt;/code&gt; instance. However, they are not directly responsible for reading and writing their representations from and to BSON.  Instead,
+this process is delegated to &lt;a href=&#34;http://api.mongodb.org/java/3.1/?org/bson/BsonWriter.html
+&#34;&gt;&lt;code&gt;BsonWriter&lt;/code&gt;&lt;/a&gt; and
+&lt;a href=&#34;http://api.mongodb.org/java/3.1/?org/bson/BsonReader.html
+&#34;&gt;&lt;code&gt;BsonReader&lt;/code&gt;&lt;/a&gt;, abstract classes that expose methods for iterative, stream-based processing of
+BSON documents.&lt;/p&gt;
 
-&lt;h3 id=&#34;bsondocument&#34;&gt;BsonDocument&lt;/h3&gt;
+&lt;h3 id=&#34;bsonwriter&#34;&gt;BsonWriter&lt;/h3&gt;
 
-&lt;p&gt;Although generally not needed by users of the high-level driver API, the &lt;a href=&#34;http://api.mongodb.org/java/3.1/?org/bson/BsonDocument.html
-&#34;&gt;&lt;code&gt;BsonDocument&lt;/code&gt;&lt;/a&gt; class is
-central to the way that documents are managed internally by the driver.  The &lt;code&gt;BsonDocument&lt;/code&gt; class can represent dynamically structured
-documents of any complexity with a type-safe API.  For instance, the document&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;BsonWriter&lt;/code&gt; class exposes methods for writing a BSON document.  Consider the task of writing the document&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-javascript&#34;&gt;{ 
   &amp;quot;a&amp;quot; : &amp;quot;MongoDB&amp;quot;, 
-  &amp;quot;b&amp;quot; : [ 1, 2 ] 
+  &amp;quot;b&amp;quot; : [ 
+          { &amp;quot;c&amp;quot;: 1 } 
+        ] 
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;can be constructed as a BsonDocument as follows:&lt;/p&gt;
+&lt;p&gt;The following code will stream a document of this structure to a &lt;code&gt;BsonWriter&lt;/code&gt;:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;new BsonDocument().append(&amp;quot;a&amp;quot;, new BsonString(&amp;quot;MongoDB&amp;quot;))
-                  .append(&amp;quot;b&amp;quot;, new BsonArray(Arrays.asList(new BsonInt32(1), new BsonInt32(2))));
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;BsonWriter writer = ... // Construct a BsonWriter
+
+writer.writeStartDocument();           
+    writer.writeName(&amp;quot;a&amp;quot;);             
+    writer.writeString(&amp;quot;MongoDB&amp;quot;);     
+    writer.writeName(&amp;quot;b&amp;quot;);             
+    writer.writeStartArray();          
+        writer.writeStartDocument();   
+            writer.writeName(&amp;quot;c&amp;quot;);     
+            writer.writeInt32(1);      
+        writer.writeEndDocument();     
+    writer.writeEndArray();            
+writer.writeEndDocument();             
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;The type safety comes from &lt;code&gt;BsonDocument&lt;/code&gt; implementing &lt;code&gt;Map&amp;lt;String, BsonValue&amp;gt;&lt;/code&gt;, so even built-in types like &lt;code&gt;int&lt;/code&gt;, &lt;code&gt;String&lt;/code&gt; and &lt;code&gt;List&lt;/code&gt; must
-be wrapped in a sub-class of &lt;code&gt;BsonValue&lt;/code&gt;.  For a complete list of &lt;code&gt;BsonValue&lt;/code&gt; sub-types, please consult the
-&lt;a href=&#34;http://api.mongodb.org/java/3.1/?org/bson/BsonValue.html
-&#34;&gt;&lt;code&gt;BsonValue&lt;/code&gt;&lt;/a&gt; API documentation.&lt;/p&gt;
+&lt;p&gt;The indentation is not necessary: it&amp;rsquo;s just to clarify that the stream of events written to the &lt;code&gt;BsonWriter&lt;/code&gt;, although written
+iteratively, have an implicit hierarchical structure.  The BsonWriter validates that the events create only properly structured BSON
+documents.  Otherwise, it throws a &lt;code&gt;BsonSerializationException&lt;/code&gt;.&lt;/p&gt;
 
-&lt;h3 id=&#34;document&#34;&gt;Document&lt;/h3&gt;
+&lt;p&gt;The two most important classes to extend &lt;code&gt;BsonWriter&lt;/code&gt; are &lt;a href=&#34;http://api.mongodb.org/java/3.1/?org/bson/BsonBinaryWriter.html
+&#34;&gt;&lt;code&gt;BsonBinaryWriter&lt;/code&gt;&lt;/a&gt; and
+&lt;a href=&#34;http://api.mongodb.org/java/3.1/?org/bson/json/JsonWriter.html
+&#34;&gt;&lt;code&gt;JsonWriter&lt;/code&gt;&lt;/a&gt;.  &lt;code&gt;BsonBinaryWriter&lt;/code&gt; writes the BSON
+document as a stream of bytes in accordance with the &lt;a href=&#34;http://www.bsonspec.org&#34;&gt;BSON&lt;/a&gt; specification, while &lt;code&gt;JsonWriter&lt;/code&gt; writes the BSON
+document as a stream of characters in accordance with
+&lt;a href=&#34;http://docs.mongodb.org/manual/reference/mongodb-extended-json/&#34;&gt;MongoDB Extended JSON&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;Most applications will use the &lt;a href=&#34;http://api.mongodb.org/java/3.1/?org/bson/Document.html
-&#34;&gt;&lt;code&gt;Document&lt;/code&gt;&lt;/a&gt; class instead.  Like &lt;code&gt;BsonDocument&lt;/code&gt;, the
-&lt;code&gt;Document&lt;/code&gt; class can represent dynamically structured documents of any complexity; however, the typing is much looser, as &lt;code&gt;Document&lt;/code&gt;
-implements &lt;code&gt;Map&amp;lt;String, Object&amp;gt;&lt;/code&gt;. As a result, the same document as above can be constructed using the Document class as follows:&lt;/p&gt;
+&lt;h3 id=&#34;bsonreader&#34;&gt;BsonReader&lt;/h3&gt;
 
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;new Document().append(&amp;quot;a&amp;quot;, &amp;quot;MongoDB&amp;quot;)
-              .append(&amp;quot;b&amp;quot;, Arrays.asList(1, 2));
+&lt;p&gt;The &lt;code&gt;BsonReader&lt;/code&gt; class exposes methods for reading a BSON document.  Consider the task of reading the document written above with a
+&lt;code&gt;BsonReader&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;BsonReader reader = ... // Construct a BsonReader
+
+reader.readStartDocument();                           
+    reader.readName();      // read the name &amp;quot;a&amp;quot;      
+    reader.readString();    // read string &amp;quot;MongoDB&amp;quot;  
+    reader.readName();      // read the name &amp;quot;b&amp;quot;      
+    reader.readStartArray();                          
+        reader.readStartDocument();                   
+            reader.readName();   // read the name &amp;quot;c&amp;quot; 
+            reader.readInt32();  // read the integer 1
+        reader.readEndDocument();                     
+    reader.readEndArray();                            
+reader.readEndDocument();                             
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;There is less code to write, but runtime errors are possible if you inadvertently add an instance of an unsupported value type.&lt;/p&gt;
+&lt;p&gt;As with the writer example, the indentation is not necessary: it&amp;rsquo;s just to clarify that the stream of events read from the &lt;code&gt;BsonWriter&lt;/code&gt;,
+although written iteratively, have an implicit hierarchical structure.  The BsonReader will throw a &lt;code&gt;BsonSerializationException&lt;/code&gt; if the
+events read do not match the structure of the document that is being read from.&lt;/p&gt;
 
-&lt;p&gt;The most commonly used value types are:&lt;/p&gt;
+&lt;p&gt;In most situations an application will not know the exact structure of the document being read.  For that reason, &lt;code&gt;BsonReader&lt;/code&gt;
+exposes a few methods that allow an application to peak ahead so that it can figure out what method to call next.  Consider a situation
+where an application must read a BSON document with an unknown structure:&lt;/p&gt;
 
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;BSON type&lt;/th&gt;
-&lt;th&gt;Java type&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;reader.readStartDocument();
 
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;Document&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;org.bson.Document&lt;/code&gt;&lt;/td&gt;
-&lt;/tr&gt;
+while (reader.readBsonType() != BsonType.END_OF_DOCUMENT) {
+    String fieldName = reader.readName();
+    switch (reader.getCurrentBsonType()) {
+        case INT32:
+            int intValue = reader.readInt32();
+            break;
+        case INT64:
+            long longValue = reader.readInt64();
+            break;
+        // ... handle each supported field type
+    }
+}
 
-&lt;tr&gt;
-&lt;td&gt;Array&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;java.util.List&lt;/code&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;Date&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;java.util.Date&lt;/code&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;Boolean&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;java.lang.Boolean&lt;/code&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;Double&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;java.lang.Double&lt;/code&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;Int32&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;java.lang.Integer&lt;/code&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;Int64&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;java.lang.Long&lt;/code&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;String&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;java.lang.String&lt;/code&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;Binary&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;org.bson.types.Binary&lt;/code&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;ObjectId&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;org.bson.types.ObjectId&lt;/code&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;Null&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;null&lt;/code&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;It is actually possible to change these mappings; the mechanism for doing so is covered &lt;a href=&#34;/mongo-java-driver/3.1/mongo-java-driver/3.1/bson/codecs/&#34;&gt;later&lt;/a&gt; in this
-reference .&lt;/p&gt;
-
-&lt;h3 id=&#34;dbobject&#34;&gt;DBObject&lt;/h3&gt;
-
-&lt;p&gt;Although not recommended for new applications, those upgrading from the 2.x driver series may continue to use the
-&lt;a href=&#34;http://api.mongodb.org/java/3.1/?com/mongodb/DBObject.html
-&#34;&gt;&lt;code&gt;DBObject&lt;/code&gt;&lt;/a&gt; interface to represent BSON documents.  &lt;code&gt;DBObject&lt;/code&gt; is similar to Document in that it
-represents BSON values as &lt;code&gt;Object&lt;/code&gt;, but it has a few shortcomings that were impossible to overcome:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;it is an interface rather than a class, so it&amp;rsquo;s API can not be extended without breaking binary compatibility&lt;/li&gt;
-&lt;li&gt;it doesn&amp;rsquo;t actually implement &lt;code&gt;Map&amp;lt;String, Object&amp;gt;&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;because it is an interface, a separate concrete class called &lt;a href=&#34;http://api.mongodb.org/java/3.1/?com/mongodb/BasicDBObject.html
-&#34;&gt;&lt;code&gt;BasicDBObject&lt;/code&gt;&lt;/a&gt; which
-implements that interface, is required&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&#34;bson&#34;&gt;Bson&lt;/h3&gt;
-
-&lt;p&gt;To tie these all together, the driver contains a small but powerful interface called &lt;a href=&#34;http://api.mongodb.org/java/3.1/?org/bson/conversions/Bson.html
-&#34;&gt;&lt;code&gt;Bson&lt;/code&gt;&lt;/a&gt;.
-Any class that represents a BSON document, whether included in the driver itself or from a third party, can implement this interface and
-can then be used any place in the high-level API where a BSON document is required. The three classes discussed above all implement this
-interface and so can be used interchangeably based on the needs of a given application.  For example:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;collection.find(new BsonDocument(&amp;quot;x&amp;quot;, new BsonInt32(1)));
-collection.find(new Document(&amp;quot;x&amp;quot;, 1));
-collection.find(new BasicDBObject(&amp;quot;x&amp;quot;, 1));
+reader.readEndDocument();
 &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In this example, the application iterates through the fields of the document until it reaches &lt;code&gt;END_OF_DOCUMENT&lt;/code&gt;.  For each field, it
+reads the name and then the value based on the &lt;code&gt;BsonType&lt;/code&gt; of the field.&lt;/p&gt;
+
+&lt;p&gt;A similar pattern can be used to read a BSON array:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;reader.readStartArray();
+
+while (reader.readBsonType() != BsonType.END_OF_DOCUMENT) {
+    switch (reader.getCurrentBsonType()) {
+        case INT32:
+            int intValue = reader.readInt32();
+            break;
+        case INT64:
+            long longValue = reader.readInt64();
+            break;
+        // ... handle each supported field type
+    }
+}
+
+reader.readEndArray();
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The only significant difference between reading an array and reading a document is that, since the elements of an array do not have names,
+there is no field name to read, only a series of values.&lt;/p&gt;
+
+&lt;p&gt;The two most important classes to extend &lt;code&gt;BsonReader&lt;/code&gt; are &lt;a href=&#34;http://api.mongodb.org/java/3.1/?org/bson/BsonBinaryReader.html
+&#34;&gt;&lt;code&gt;BsonBinaryReader&lt;/code&gt;&lt;/a&gt; and
+&lt;a href=&#34;http://api.mongodb.org/java/3.1/?org/bson/json/JsonReader.html
+&#34;&gt;&lt;code&gt;JsonReader&lt;/code&gt;&lt;/a&gt;. &lt;code&gt;BsonBinaryReader&lt;/code&gt; reads the BSON
+document as a stream of bytes in accordance with the &lt;a href=&#34;http://www.bsonspec.org&#34;&gt;BSON&lt;/a&gt; specification, while &lt;code&gt;JsonReader&lt;/code&gt; reads the BSON
+document as a stream of characters in accordance with
+&lt;a href=&#34;http://docs.mongodb.org/manual/reference/mongodb-extended-json/&#34;&gt;MongoDB Extended JSON&lt;/a&gt;.&lt;/p&gt;
 </description>
     </item>
     
@@ -1290,146 +1429,6 @@ intersects the given Point:&lt;/p&gt;
     </item>
     
     <item>
-      <title>Readers and Writers</title>
-      <link>/mongo-java-driver/3.1/bson/readers-and-writers/</link>
-      <pubDate>Thu, 19 Mar 2015 14:27:51 -0400</pubDate>
-      
-      <guid>/mongo-java-driver/3.1/bson/readers-and-writers/</guid>
-      <description>
-
-&lt;h2 id=&#34;bsonwriter-and-bsonreader&#34;&gt;BsonWriter and BsonReader&lt;/h2&gt;
-
-&lt;p&gt;The various implementations of the &lt;code&gt;Bson&lt;/code&gt; interface discussed in the previous section all represent BSON documents using an underlying
-Java &lt;code&gt;Map&lt;/code&gt; instance. However, they are not directly responsible for reading and writing their representations from and to BSON.  Instead,
-this process is delegated to &lt;a href=&#34;http://api.mongodb.org/java/3.1/?org/bson/BsonWriter.html
-&#34;&gt;&lt;code&gt;BsonWriter&lt;/code&gt;&lt;/a&gt; and
-&lt;a href=&#34;http://api.mongodb.org/java/3.1/?org/bson/BsonReader.html
-&#34;&gt;&lt;code&gt;BsonReader&lt;/code&gt;&lt;/a&gt;, abstract classes that expose methods for iterative, stream-based processing of
-BSON documents.&lt;/p&gt;
-
-&lt;h3 id=&#34;bsonwriter&#34;&gt;BsonWriter&lt;/h3&gt;
-
-&lt;p&gt;The &lt;code&gt;BsonWriter&lt;/code&gt; class exposes methods for writing a BSON document.  Consider the task of writing the document&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-javascript&#34;&gt;{ 
-  &amp;quot;a&amp;quot; : &amp;quot;MongoDB&amp;quot;, 
-  &amp;quot;b&amp;quot; : [ 
-          { &amp;quot;c&amp;quot;: 1 } 
-        ] 
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The following code will stream a document of this structure to a &lt;code&gt;BsonWriter&lt;/code&gt;:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;BsonWriter writer = ... // Construct a BsonWriter
-
-writer.writeStartDocument();           
-    writer.writeName(&amp;quot;a&amp;quot;);             
-    writer.writeString(&amp;quot;MongoDB&amp;quot;);     
-    writer.writeName(&amp;quot;b&amp;quot;);             
-    writer.writeStartArray();          
-        writer.writeStartDocument();   
-            writer.writeName(&amp;quot;c&amp;quot;);     
-            writer.writeInt32(1);      
-        writer.writeEndDocument();     
-    writer.writeEndArray();            
-writer.writeEndDocument();             
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The indentation is not necessary: it&amp;rsquo;s just to clarify that the stream of events written to the &lt;code&gt;BsonWriter&lt;/code&gt;, although written
-iteratively, have an implicit hierarchical structure.  The BsonWriter validates that the events create only properly structured BSON
-documents.  Otherwise, it throws a &lt;code&gt;BsonSerializationException&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;The two most important classes to extend &lt;code&gt;BsonWriter&lt;/code&gt; are &lt;a href=&#34;http://api.mongodb.org/java/3.1/?org/bson/BsonBinaryWriter.html
-&#34;&gt;&lt;code&gt;BsonBinaryWriter&lt;/code&gt;&lt;/a&gt; and
-&lt;a href=&#34;http://api.mongodb.org/java/3.1/?org/bson/json/JsonWriter.html
-&#34;&gt;&lt;code&gt;JsonWriter&lt;/code&gt;&lt;/a&gt;.  &lt;code&gt;BsonBinaryWriter&lt;/code&gt; writes the BSON
-document as a stream of bytes in accordance with the &lt;a href=&#34;http://www.bsonspec.org&#34;&gt;BSON&lt;/a&gt; specification, while &lt;code&gt;JsonWriter&lt;/code&gt; writes the BSON
-document as a stream of characters in accordance with
-&lt;a href=&#34;http://docs.mongodb.org/manual/reference/mongodb-extended-json/&#34;&gt;MongoDB Extended JSON&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h3 id=&#34;bsonreader&#34;&gt;BsonReader&lt;/h3&gt;
-
-&lt;p&gt;The &lt;code&gt;BsonReader&lt;/code&gt; class exposes methods for reading a BSON document.  Consider the task of reading the document written above with a
-&lt;code&gt;BsonReader&lt;/code&gt;:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;BsonReader reader = ... // Construct a BsonReader
-
-reader.readStartDocument();                           
-    reader.readName();      // read the name &amp;quot;a&amp;quot;      
-    reader.readString();    // read string &amp;quot;MongoDB&amp;quot;  
-    reader.readName();      // read the name &amp;quot;b&amp;quot;      
-    reader.readStartArray();                          
-        reader.readStartDocument();                   
-            reader.readName();   // read the name &amp;quot;c&amp;quot; 
-            reader.readInt32();  // read the integer 1
-        reader.readEndDocument();                     
-    reader.readEndArray();                            
-reader.readEndDocument();                             
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;As with the writer example, the indentation is not necessary: it&amp;rsquo;s just to clarify that the stream of events read from the &lt;code&gt;BsonWriter&lt;/code&gt;,
-although written iteratively, have an implicit hierarchical structure.  The BsonReader will throw a &lt;code&gt;BsonSerializationException&lt;/code&gt; if the
-events read do not match the structure of the document that is being read from.&lt;/p&gt;
-
-&lt;p&gt;In most situations an application will not know the exact structure of the document being read.  For that reason, &lt;code&gt;BsonReader&lt;/code&gt;
-exposes a few methods that allow an application to peak ahead so that it can figure out what method to call next.  Consider a situation
-where an application must read a BSON document with an unknown structure:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;reader.readStartDocument();
-
-while (reader.readBsonType() != BsonType.END_OF_DOCUMENT) {
-    String fieldName = reader.readName();
-    switch (reader.getCurrentBsonType()) {
-        case INT32:
-            int intValue = reader.readInt32();
-            break;
-        case INT64:
-            long longValue = reader.readInt64();
-            break;
-        // ... handle each supported field type
-    }
-}
-
-reader.readEndDocument();
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;In this example, the application iterates through the fields of the document until it reaches &lt;code&gt;END_OF_DOCUMENT&lt;/code&gt;.  For each field, it
-reads the name and then the value based on the &lt;code&gt;BsonType&lt;/code&gt; of the field.&lt;/p&gt;
-
-&lt;p&gt;A similar pattern can be used to read a BSON array:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;reader.readStartArray();
-
-while (reader.readBsonType() != BsonType.END_OF_DOCUMENT) {
-    switch (reader.getCurrentBsonType()) {
-        case INT32:
-            int intValue = reader.readInt32();
-            break;
-        case INT64:
-            long longValue = reader.readInt64();
-            break;
-        // ... handle each supported field type
-    }
-}
-
-reader.readEndArray();
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The only significant difference between reading an array and reading a document is that, since the elements of an array do not have names,
-there is no field name to read, only a series of values.&lt;/p&gt;
-
-&lt;p&gt;The two most important classes to extend &lt;code&gt;BsonReader&lt;/code&gt; are &lt;a href=&#34;http://api.mongodb.org/java/3.1/?org/bson/BsonBinaryReader.html
-&#34;&gt;&lt;code&gt;BsonBinaryReader&lt;/code&gt;&lt;/a&gt; and
-&lt;a href=&#34;http://api.mongodb.org/java/3.1/?org/bson/json/JsonReader.html
-&#34;&gt;&lt;code&gt;JsonReader&lt;/code&gt;&lt;/a&gt;. &lt;code&gt;BsonBinaryReader&lt;/code&gt; reads the BSON
-document as a stream of bytes in accordance with the &lt;a href=&#34;http://www.bsonspec.org&#34;&gt;BSON&lt;/a&gt; specification, while &lt;code&gt;JsonReader&lt;/code&gt; reads the BSON
-document as a stream of characters in accordance with
-&lt;a href=&#34;http://docs.mongodb.org/manual/reference/mongodb-extended-json/&#34;&gt;MongoDB Extended JSON&lt;/a&gt;.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
       <title>Projections</title>
       <link>/mongo-java-driver/3.1/builders/projections/</link>
       <pubDate>Thu, 19 Mar 2015 14:27:51 -0400</pubDate>
@@ -1549,80 +1548,6 @@ use the &lt;code&gt;metaTextScore&lt;/code&gt; method to specify the name of the
 &lt;p&gt;This example includes the &lt;code&gt;quantity&lt;/code&gt; and &lt;code&gt;totalAmount&lt;/code&gt; fields and excludes the &lt;code&gt;_id&lt;/code&gt; field:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;fields(include(&amp;quot;quantity&amp;quot;, &amp;quot;totalAmount&amp;quot;), excludeId()) 
-&lt;/code&gt;&lt;/pre&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Sort Criteria  </title>
-      <link>/mongo-java-driver/3.1/builders/sorts/</link>
-      <pubDate>Thu, 19 Mar 2015 14:27:51 -0400</pubDate>
-      
-      <guid>/mongo-java-driver/3.1/builders/sorts/</guid>
-      <description>
-
-&lt;h2 id=&#34;sorts&#34;&gt;Sorts&lt;/h2&gt;
-
-&lt;p&gt;The &lt;a href=&#34;http://api.mongodb.org/java/3.1/?com/mongodb/client/model/Sorts.html
-&#34;&gt;&lt;code&gt;Sorts&lt;/code&gt;&lt;/a&gt; class provides static factory methods for all the MongoDB sort criteria
-operators.  Each method returns an instance of the &lt;a href=&#34;/mongo-java-driver/3.1/mongo-java-driver/3.1/bson/documents/#bson&#34;&gt;&lt;code&gt;Bson&lt;/code&gt;&lt;/a&gt; type, which can in turn be passed to
-any method that expects sort criteria.&lt;/p&gt;
-
-&lt;p&gt;For brevity, you may choose to import the methods of the &lt;code&gt;Sorts&lt;/code&gt; class statically:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;import com.mongodb.client.model.Sorts.*;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;All the examples below assume this static import.&lt;/p&gt;
-
-&lt;h3 id=&#34;ascending&#34;&gt;Ascending&lt;/h3&gt;
-
-&lt;p&gt;To specify an ascending sort, use one of the &lt;code&gt;ascending&lt;/code&gt; methods.&lt;/p&gt;
-
-&lt;p&gt;This example specifies an ascending sort on the &lt;code&gt;quantity&lt;/code&gt; field:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;ascending(&amp;quot;quantity&amp;quot;)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This example specifies an ascending sort on the &lt;code&gt;quantity&lt;/code&gt; field, followed by an ascending sort on the &lt;code&gt;totalAmount&lt;/code&gt; field:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;ascending(&amp;quot;quantity&amp;quot;, &amp;quot;totalAmount&amp;quot;) 
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;descending&#34;&gt;Descending&lt;/h3&gt;
-
-&lt;p&gt;To specify a descending sort, use one of the &lt;code&gt;descending&lt;/code&gt; methods.&lt;/p&gt;
-
-&lt;p&gt;This example specifies a descending sort on the &lt;code&gt;quantity&lt;/code&gt; field:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;descending(&amp;quot;quantity&amp;quot;)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This example specifies a descending sort on the &lt;code&gt;quantity&lt;/code&gt; field, followed by a descending sort on the &lt;code&gt;totalAmount&lt;/code&gt; field:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;descending(&amp;quot;quantity&amp;quot;, &amp;quot;totalAmount&amp;quot;) 
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;text-score&#34;&gt;Text Score&lt;/h3&gt;
-
-&lt;p&gt;To specify a sort by &lt;a href=&#34;http://docs.mongodb.org/manual/reference/operator/query/text/#sort-by-text-search-score
-&#34;&gt;the score of a &lt;code&gt;$text&lt;/code&gt; query&lt;/a&gt;, use the
-&lt;code&gt;metaTextScore&lt;/code&gt; method to specify the name of the projected field.&lt;/p&gt;
-
-&lt;p&gt;This example specifies a sort on the score of a &lt;code&gt;$text&lt;/code&gt; query that will be projected into the &lt;code&gt;scoreValue&lt;/code&gt; field in a projection on the
-same query:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;metaTextScore(&amp;quot;scoreValue&amp;quot;)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;combining-sort-criteria&#34;&gt;Combining sort criteria&lt;/h3&gt;
-
-&lt;p&gt;To specify the combination of multiple sort criteria, use the &lt;code&gt;orderBy&lt;/code&gt; method.&lt;/p&gt;
-
-&lt;p&gt;This example specifies an ascending sort on the &lt;code&gt;quantity&lt;/code&gt; field, followed by an ascending sort on the &lt;code&gt;totalAmount&lt;/code&gt; field, followed by a
-descending sort on the &lt;code&gt;orderDate&lt;/code&gt; field:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;orderBy(ascending(&amp;quot;quantity&amp;quot;, &amp;quot;totalAmount&amp;quot;), descending(&amp;quot;orderDate&amp;quot;))
 &lt;/code&gt;&lt;/pre&gt;
 </description>
     </item>
@@ -1888,6 +1813,80 @@ described above.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;combine(set(&amp;quot;quantity&amp;quot;, 11), 
         set(&amp;quot;total&amp;quot;, 30.40),
         pushEach(&amp;quot;prices&amp;quot;, Arrays.asList(4.99, 5.99, 10.99)))
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Sort Criteria  </title>
+      <link>/mongo-java-driver/3.1/builders/sorts/</link>
+      <pubDate>Thu, 19 Mar 2015 14:27:51 -0400</pubDate>
+      
+      <guid>/mongo-java-driver/3.1/builders/sorts/</guid>
+      <description>
+
+&lt;h2 id=&#34;sorts&#34;&gt;Sorts&lt;/h2&gt;
+
+&lt;p&gt;The &lt;a href=&#34;http://api.mongodb.org/java/3.1/?com/mongodb/client/model/Sorts.html
+&#34;&gt;&lt;code&gt;Sorts&lt;/code&gt;&lt;/a&gt; class provides static factory methods for all the MongoDB sort criteria
+operators.  Each method returns an instance of the &lt;a href=&#34;/mongo-java-driver/3.1/mongo-java-driver/3.1/bson/documents/#bson&#34;&gt;&lt;code&gt;Bson&lt;/code&gt;&lt;/a&gt; type, which can in turn be passed to
+any method that expects sort criteria.&lt;/p&gt;
+
+&lt;p&gt;For brevity, you may choose to import the methods of the &lt;code&gt;Sorts&lt;/code&gt; class statically:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;import com.mongodb.client.model.Sorts.*;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;All the examples below assume this static import.&lt;/p&gt;
+
+&lt;h3 id=&#34;ascending&#34;&gt;Ascending&lt;/h3&gt;
+
+&lt;p&gt;To specify an ascending sort, use one of the &lt;code&gt;ascending&lt;/code&gt; methods.&lt;/p&gt;
+
+&lt;p&gt;This example specifies an ascending sort on the &lt;code&gt;quantity&lt;/code&gt; field:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;ascending(&amp;quot;quantity&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This example specifies an ascending sort on the &lt;code&gt;quantity&lt;/code&gt; field, followed by an ascending sort on the &lt;code&gt;totalAmount&lt;/code&gt; field:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;ascending(&amp;quot;quantity&amp;quot;, &amp;quot;totalAmount&amp;quot;) 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;descending&#34;&gt;Descending&lt;/h3&gt;
+
+&lt;p&gt;To specify a descending sort, use one of the &lt;code&gt;descending&lt;/code&gt; methods.&lt;/p&gt;
+
+&lt;p&gt;This example specifies a descending sort on the &lt;code&gt;quantity&lt;/code&gt; field:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;descending(&amp;quot;quantity&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This example specifies a descending sort on the &lt;code&gt;quantity&lt;/code&gt; field, followed by a descending sort on the &lt;code&gt;totalAmount&lt;/code&gt; field:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;descending(&amp;quot;quantity&amp;quot;, &amp;quot;totalAmount&amp;quot;) 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;text-score&#34;&gt;Text Score&lt;/h3&gt;
+
+&lt;p&gt;To specify a sort by &lt;a href=&#34;http://docs.mongodb.org/manual/reference/operator/query/text/#sort-by-text-search-score
+&#34;&gt;the score of a &lt;code&gt;$text&lt;/code&gt; query&lt;/a&gt;, use the
+&lt;code&gt;metaTextScore&lt;/code&gt; method to specify the name of the projected field.&lt;/p&gt;
+
+&lt;p&gt;This example specifies a sort on the score of a &lt;code&gt;$text&lt;/code&gt; query that will be projected into the &lt;code&gt;scoreValue&lt;/code&gt; field in a projection on the
+same query:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;metaTextScore(&amp;quot;scoreValue&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;combining-sort-criteria&#34;&gt;Combining sort criteria&lt;/h3&gt;
+
+&lt;p&gt;To specify the combination of multiple sort criteria, use the &lt;code&gt;orderBy&lt;/code&gt; method.&lt;/p&gt;
+
+&lt;p&gt;This example specifies an ascending sort on the &lt;code&gt;quantity&lt;/code&gt; field, followed by an ascending sort on the &lt;code&gt;totalAmount&lt;/code&gt; field, followed by a
+descending sort on the &lt;code&gt;orderDate&lt;/code&gt; field:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;orderBy(ascending(&amp;quot;quantity&amp;quot;, &amp;quot;totalAmount&amp;quot;), descending(&amp;quot;orderDate&amp;quot;))
 &lt;/code&gt;&lt;/pre&gt;
 </description>
     </item>

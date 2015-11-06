@@ -69,13 +69,9 @@ class DBCollectionImpl extends DBCollection {
     @Override
     QueryResultIterator find(DBObject ref, DBObject fields, int numToSkip, int batchSize, int limit, int options,
                              ReadPreference readPref, DBDecoder decoder, DBEncoder encoder) {
-
+        long start = System.currentTimeMillis();
         if (ref == null) {
             ref = new BasicDBObject();
-        }
-
-        if (willTrace()) {
-            trace("find: " + namespace + " " + JSON.serialize(ref));
         }
 
         OutMessage query = OutMessage.query(this, options, numToSkip, chooseBatchSize(batchSize, limit, 0), ref, fields, readPref,
@@ -83,7 +79,13 @@ class DBCollectionImpl extends DBCollection {
 
         Response res = db.getConnector().call(_db, this, query, null, 2, readPref, decoder);
 
-        return new QueryResultIterator(this.namespace, db.getMongo(), res, batchSize, limit, decoder);
+        QueryResultIterator iterator = new QueryResultIterator(this.namespace, db.getMongo(), res, batchSize, limit,
+                decoder);
+        if (willTrace()) {
+            trace("db." + _name + ".find(" + JSON.serialize(ref) + ") took: "
+                    + (System.currentTimeMillis() - start) + " ms");
+        }
+        return iterator;
     }
 
     public Cursor aggregate(final List<DBObject> pipeline, final AggregationOptions options,
@@ -172,14 +174,9 @@ class DBCollectionImpl extends DBCollection {
             throw new IllegalArgumentException("Write concern can not be null");
         }
 
+        long start = System.currentTimeMillis();
         if (encoder == null)
             encoder = DefaultDBEncoder.FACTORY.create();
-
-        if ( willTrace() ) {
-            for (DBObject o : list) {
-                trace("save:  " + namespace + " " + JSON.serialize(o));
-            }
-        }
 
         DBPort port = db.getConnector().getPrimaryPort();
         try {
@@ -196,6 +193,18 @@ class DBCollectionImpl extends DBCollection {
             }
         } finally {
             db.getConnector().releasePort(port);
+
+            if (willTrace()) {
+                if (list.size() == 1) {
+                    trace("db." + _name + ".insert(" + JSON.serialize(list.get(0)) + ") took: "
+                            + (System.currentTimeMillis() - start) + " ms");
+                } else {
+                    for (DBObject o : list) {
+                        trace("db." + _name + ".insert(" + JSON.serialize(o) + ")");
+                    }
+                }
+                trace("save: took: " + (System.currentTimeMillis() - start) + " ms");
+            }
         }
     }
 
@@ -208,12 +217,9 @@ class DBCollectionImpl extends DBCollection {
             throw new IllegalArgumentException("Write concern can not be null");
         }
 
+        long start = System.currentTimeMillis();
         if (encoder == null) {
             encoder = DefaultDBEncoder.FACTORY.create();
-        }
-
-        if (willTrace()) {
-            trace("remove: " + namespace + " " + JSON.serialize(query));
         }
 
         DBPort port = db.getConnector().getPrimaryPort();
@@ -233,6 +239,11 @@ class DBCollectionImpl extends DBCollection {
             }
         } finally {
             db.getConnector().releasePort(port);
+
+            if (willTrace()) {
+                trace("db." + _name + ".remove(" + JSON.serialize(query) + ") took: "
+                        + (System.currentTimeMillis() - start) + " ms");
+            }
         }
     }
 
@@ -248,6 +259,7 @@ class DBCollectionImpl extends DBCollection {
             throw new IllegalArgumentException("Write concern can not be null");
         }
 
+        long start = System.currentTimeMillis();
         if (encoder == null)
             encoder = DefaultDBEncoder.FACTORY.create();
 
@@ -256,10 +268,6 @@ class DBCollectionImpl extends DBCollection {
             String key = o.keySet().iterator().next();
             if (!key.startsWith("$"))
                 _checkObject(o, false, false);
-        }
-
-        if ( willTrace() ) {
-            trace("update: " + namespace + " " + JSON.serialize(query) + " " + JSON.serialize(o));
         }
 
         DBPort port = db.getConnector().getPrimaryPort();
@@ -278,6 +286,11 @@ class DBCollectionImpl extends DBCollection {
             }
         } finally {
             db.getConnector().releasePort(port);
+
+            if (willTrace()) {
+                trace("db." + _name + ".update(" + JSON.serialize(query) + ", " + JSON.serialize(o) + ") took: "
+                        + (System.currentTimeMillis() - start) + " ms");
+            }
         }
     }
 
@@ -579,10 +592,11 @@ class DBCollectionImpl extends DBCollection {
     }
 
     private static final Logger TRACE_LOGGER = Logger.getLogger( "com.mongodb.TRACE" );
-    private static final Level TRACE_LEVEL = Boolean.getBoolean( "DB.TRACE" ) ? Level.INFO : Level.FINEST;
+    private static final boolean DB_TRACE = Boolean.getBoolean("DB.TRACE");
+    private static final Level TRACE_LEVEL = DB_TRACE ? Level.INFO : Level.FINEST;
 
     private boolean willTrace(){
-        return TRACE_LOGGER.isLoggable(TRACE_LEVEL);
+        return DB_TRACE || TRACE_LOGGER.isLoggable(TRACE_LEVEL);
     }
 
     private void trace( String s ){
